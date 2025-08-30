@@ -1,8 +1,15 @@
 import error_report.ConsoleError;
 import error_report.IErrorReport;
+import scanner.IScanner;
+import scanner.Scanner;
+import token.Token;
 
 import java.io.*;
-import java.util.Scanner;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -26,16 +33,26 @@ public class Main {
         }
     }
 
-    public static void runFile(String filename) throws FileNotFoundException {
-        Scanner scanner = new Scanner(new File("./" + filename));
+    /**
+     * Tokenizes the file and prints the tokens
+     * @param filename - file we want to read
+     * @throws FileNotFoundException
+     */
+    public static void runFile(String filename) throws Exception {
+        String source = Files.readString(Paths.get(filename));
 
-        while(scanner.hasNext()){
-            String line = scanner.next();
-            System.out.println(line);
+        IScanner scanner = new Scanner(source);
+        List<Token> tokens = scanner.listTokens();
+        for(Token token : tokens){
+            System.out.println(token.toString());
         }
     }
 
-    public static void runPrompt() throws IOException {
+    /**
+     * Prompts user to enter the file name and runs the runFile method
+     * @throws IOException
+     */
+    public static void runPrompt() throws Exception {
         System.out.println("Enter a file name:");
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String file = br.readLine();
