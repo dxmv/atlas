@@ -68,7 +68,36 @@ public class Scanner implements IScanner{
                 break;
             // handle double chars
             case '/':
-                addToken(TokenType.SLASH,line,"/");
+                // handle single-line comments
+                if(!isAtEnd() && matches(peek(),'/')){
+                    boolean newLine = false;
+                    while(!isAtEnd()){
+                        if(matches(peek(),'\n')){
+                            newLine = true;
+                        }
+                        advance();
+                    }
+                    if(newLine){
+                        line++;
+                    }
+                }
+                // handle multiline comments
+                else if(matches(peek(),'*')){
+                    while(!isAtEnd()){
+                        if(matches(peek(),'*')){
+                            advance();
+                            if(!isAtEnd() && matches(peek(),'/')){
+                                advance();
+                            }
+                        }
+                        if(matches(peek(),'\n')){
+                            line++;
+                        }
+                        advance();
+                    }
+                } else {
+                    addToken(TokenType.SLASH, line, "/");
+                }
                 break;
             case '=':
                 if(matches(peek(),'=')){
