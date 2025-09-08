@@ -1,1 +1,4 @@
 = * + - /
+()
+var char = 1
+if char <= 21

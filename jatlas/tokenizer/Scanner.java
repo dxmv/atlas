@@ -57,14 +57,55 @@ public class Scanner implements IScanner{
             case '*':
                 addToken(TokenType.STAR,line,"*");
                 break;
-            case '/':
-                addToken(TokenType.SLASH,line,"/");
+            case '.':
+                addToken(TokenType.DOT,line,".");
                 break;
             case ',':
                 addToken(TokenType.COMMA,line,",");
                 break;
             case ';':
                 addToken(TokenType.SEMICOLON,line,";");
+                break;
+            // handle double chars
+            case '/':
+                addToken(TokenType.SLASH,line,"/");
+                break;
+            case '=':
+                if(matches(peek(),'=')){
+                    addToken(TokenType.EQUAL_EQUAL,line,"==");
+                    advance();
+                }
+                else {
+                    addToken(TokenType.EQUAL, line, "=");
+                }
+                break;
+            case '!':
+                if(matches(peek(),'=')){
+                    addToken(TokenType.BANG_EQUAL,line,"!=");
+                    advance();
+                } else {
+                    addToken(TokenType.BANG, line, "!");
+                }
+                break;
+            case '>':
+                if(matches(peek(),'=')){
+                    addToken(TokenType.GREATER_EQUAL,line,">=");
+                    advance();
+                } else{
+                    addToken(TokenType.GREATER,line,">");
+                }
+                break;
+            case '<':
+                if(matches(peek(),'=')){
+                    addToken(TokenType.LESS_EQUAL,line,"<=");
+                    advance();
+                } else {
+                    addToken(TokenType.LESS, line, "<");
+                }
+                break;
+            // handle line breaks
+            case '\n':
+                line++;
                 break;
         }
     }
@@ -93,5 +134,22 @@ public class Scanner implements IScanner{
      */
     private void addToken(TokenType type, int line, Object value){
             this.tokens.add(new Token(type, line, value));
+    }
+
+    /**
+     * Check if the chars c1 and c2 are the same
+     * @param c1
+     * @param c2
+     * @return bool
+     */
+    private boolean matches(char c1, char c2){
+        return c1 == c2;
+    }
+
+    /**
+     * Returns current char, without moving pointer
+     */
+    private char peek(){
+        return source.charAt(current);
     }
 }
