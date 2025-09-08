@@ -2,12 +2,11 @@
 
 ## Roadmap
 
-### Phase 1 - Java Compiler
-
-### Phase 2 - Java Spring boot backend
-
-### Phase 3 - Frontend IDE
-
-### Phase 4 - Live
-
-### Next steps
+### Phase 1 - Tokenization
+- [x] Tokenize single chars like '*','+'...
+- [ ] Tokenize multiple chars like '==','!='...
+- [ ] Tokenize comments '//','/*'...
+- [ ] Tokenize strings
+- [ ] Tokenize identifiers
+- [ ] Tokenize numbers
+- [ ] Tokenize keywords
