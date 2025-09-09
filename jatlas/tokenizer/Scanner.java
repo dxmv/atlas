@@ -135,6 +135,11 @@ public class Scanner implements IScanner{
             case '\n':
                 line++;
                 break;
+            // handle string
+            case '\"':
+                strings();
+                break;
+            // handle numbers
         }
     }
 
@@ -179,5 +184,23 @@ public class Scanner implements IScanner{
      */
     private char peek(){
         return source.charAt(current);
+    }
+
+    private void strings(){
+        StringBuilder sb = new StringBuilder();
+        sb.append('\"'); // append the first "
+        while(!isAtEnd()){
+            // TODO: throw error here
+            if(matches(peek(),'\n')){
+            }
+            if(matches(peek(),'\"')){
+                sb.append(peek());
+                advance();
+                break;
+            }
+            sb.append(peek());
+            advance();
+        }
+        addToken(TokenType.STRING,line, sb.toString());
     }
 }
