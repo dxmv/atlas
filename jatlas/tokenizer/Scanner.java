@@ -140,6 +140,9 @@ public class Scanner implements IScanner{
                 strings();
                 break;
             // handle numbers
+            case '0','1','2','3','4','5','6','7','8','9':
+                numbers();
+            // handle identifiers and keywords
         }
     }
 
@@ -186,6 +189,9 @@ public class Scanner implements IScanner{
         return source.charAt(current);
     }
 
+    /**
+     * Handles strings, makes a string until it encounters the next " character
+     */
     private void strings(){
         StringBuilder sb = new StringBuilder();
         sb.append('\"'); // append the first "
@@ -202,5 +208,30 @@ public class Scanner implements IScanner{
             advance();
         }
         addToken(TokenType.STRING,line, sb.toString());
+    }
+
+    /**
+     * Handles numbers, makes a number until it encounters the new line
+     */
+    private void numbers(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(source.charAt(start));
+        int numDots = 1; // we can only have 1 dot in number
+        while(!isAtEnd()){
+            if(matches(peek(),'\n')){
+                break;
+            }
+            // TODO: handle non-digit chars
+            if(matches(peek(),'.')){
+                // TODO: throw error here
+                if(numDots <= 0){
+                    return;
+                }
+                numDots--;
+            }
+            sb.append(peek());
+            advance();
+        }
+        addToken(TokenType.NUMBER,line, sb.toString());
     }
 }

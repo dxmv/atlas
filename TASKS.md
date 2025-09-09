@@ -5,6 +5,6 @@
 
 # 09.09.2025
 - [x] Tokenize strings
-- [ ] Tokenize numbers
+- [x] Tokenize numbers
 - [ ] Tokenize identifiers
 - [ ] Tokenize keywords

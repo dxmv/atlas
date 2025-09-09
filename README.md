@@ -7,6 +7,7 @@
 - [x] Tokenize multiple chars like '==','!='...
 - [x] Tokenize comments '//','/*'...
 - [x] Tokenize strings
-- [ ] Tokenize numbers
+- [x] Tokenize numbers
 - [ ] Tokenize identifiers
 - [ ] Tokenize keywords
+- [ ] Allow nested multiline comments
