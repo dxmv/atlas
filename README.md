@@ -8,6 +8,7 @@
 - [x] Tokenize comments '//','/*'...
 - [x] Tokenize strings
 - [x] Tokenize numbers
-- [ ] Tokenize identifiers
-- [ ] Tokenize keywords
+- [x] Tokenize identifiers
+- [x] Tokenize keywords
 - [ ] Allow nested multiline comments
+- [ ] Error handling

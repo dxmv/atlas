@@ -1,3 +1,4 @@
+import error.ScanError;
 import tokenizer.IScanner;
 import tokenizer.Scanner;
 import tokenizer.Token;
@@ -14,11 +15,23 @@ public class Main {
             System.out.printf("Error: Usage atlas <filename>");
             return;
         }
-        String source = Files.readString(Paths.get("./test.txt"));
-        IScanner scanner = new Scanner(source);
-        List<Token> tokens = scanner.tokenize();
-        for(Token token : tokens){
-            System.out.println(token);
+        try {
+            String source = Files.readString(Paths.get("./test.txt"));
+            IScanner scanner = new Scanner(source);
+            List<Token> tokens = scanner.tokenize();
+            // print out errors
+            if(!scanner.getErrors().isEmpty()){
+                for(ScanError error : scanner.getErrors()){
+                    System.out.println(error);
+                }
+                return;
+            }
+            for (Token token : tokens) {
+                System.out.println(token);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
     }
 

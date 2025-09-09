@@ -6,7 +6,7 @@
 # 09.09.2025
 - [x] Tokenize strings
 - [x] Tokenize numbers
-- [ ] Tokenize identifiers
-- [ ] Tokenize keywords
+- [x] Tokenize identifiers
+- [x] Tokenize keywords
 - [ ] Allow nested multiline comments
-- [ ] Error handling
+- [x] Error handling and cleaner code

@@ -1,5 +1,8 @@
 package tokenizer;
 
+import error.ScanError;
+import error.ScanErrorTypes;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +12,7 @@ public class Scanner implements IScanner{
     private int start; // current position in doc
     private int line; // current line number
     List<Token> tokens = new ArrayList<>();
+    private List<ScanError> errors = new ArrayList<>();
 
     public Scanner(String source){
         this.source = source;
@@ -135,6 +139,9 @@ public class Scanner implements IScanner{
             case '\n':
                 line++;
                 break;
+            case ' ': break;
+            case '\t': break;
+            case '\r': break;
             // handle string
             case '\"':
                 strings();
@@ -148,9 +155,9 @@ public class Scanner implements IScanner{
                 else if(ScannerUtils.isAlpha(c)){
                     identifiers();
                 }
-                // unknwon token
+                // unknown token
                 else{
-                    // TODO: throw error here
+                    errors.add(new ScanError(ScanErrorTypes.UNEXPECTED_CHAR,line,"Unknown character " + c));
                 }
         }
     }
@@ -215,8 +222,9 @@ public class Scanner implements IScanner{
         StringBuilder sb = new StringBuilder();
         sb.append('\"'); // append the first "
         while(!isAtEnd()){
-            // TODO: throw error here
             if(matches(peek(),'\n')){
+                errors.add(new ScanError(ScanErrorTypes.UNTERMINATED_STRING,line,"You haven't terminated the string"));
+                return;
             }
             if(matches(peek(),'\"')){
                 sb.append(peek());
@@ -240,7 +248,6 @@ public class Scanner implements IScanner{
             if(matches(peek(),'\n')){
                 break;
             }
-            // TODO: handle non-digit chars
             if(matches(peek(),'.')){
                 // TODO: throw error here
                 if(numDots <= 0){
@@ -263,5 +270,9 @@ public class Scanner implements IScanner{
         }
         TokenType kw = ScannerUtils.getTokenType(sb.toString());
         addToken(kw != null ? kw : TokenType.IDENTIFIER,line, sb.toString());
+    }
+
+    public List<ScanError> getErrors() {
+        return errors;
     }
 }
