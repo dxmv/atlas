@@ -10,5 +10,5 @@
 - [x] Tokenize numbers
 - [x] Tokenize identifiers
 - [x] Tokenize keywords
-- [ ] Allow nested multiline comments
-- [ ] Error handling
+- [x] Allow nested multiline comments
+- [x] Error handling

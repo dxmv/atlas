@@ -34,7 +34,7 @@ public class Scanner implements IScanner{
     }
 
     /**
-     *
+     * Scans the token
      */
     private void scanToken(){
         char c = advance();
@@ -85,13 +85,20 @@ public class Scanner implements IScanner{
                 // handle multiline comments
                 else if(!isAtEnd() && matches(peek(),'*')){
                     advance();
+                    int depth = 1;
                     while(!isAtEnd()){
-                        if(matches(peek(),'*')){
+                        if(matches(peek(),'*') && matches(peekNext(),'/')){
                             advance();
-                            if(!isAtEnd() && matches(peek(),'/')){
-                                advance();
-                                break;
+                            advance();
+                            depth --;
+                            if(depth == 0){
+                                return;
                             }
+                        }
+                        if(matches(peek(),'/') && matches(peekNext(),'*')){
+                            advance();
+                            advance();
+                            depth ++;
                         }
                         if(matches(peek(),'\n')){
                             line++;
@@ -212,7 +219,7 @@ public class Scanner implements IScanner{
         if (current + 1 >= source.length()){
             return '\0';
         }
-        return source.charAt(current);
+        return source.charAt(current+1);
     }
 
     /**
