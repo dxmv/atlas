@@ -8,3 +8,5 @@
 - [x] Tokenize numbers
 - [ ] Tokenize identifiers
 - [ ] Tokenize keywords
+- [ ] Allow nested multiline comments
+- [ ] Error handling

@@ -139,10 +139,19 @@ public class Scanner implements IScanner{
             case '\"':
                 strings();
                 break;
-            // handle numbers
-            case '0','1','2','3','4','5','6','7','8','9':
-                numbers();
-            // handle identifiers and keywords
+            default:
+                // handle numbers
+                if(ScannerUtils.isDigit(c)){
+                    numbers();
+                }
+                // handle identifiers and keywords
+                else if(ScannerUtils.isAlpha(c)){
+                    identifiers();
+                }
+                // unknwon token
+                else{
+                    // TODO: throw error here
+                }
         }
     }
 
@@ -190,6 +199,16 @@ public class Scanner implements IScanner{
     }
 
     /**
+     * ONLY returns the next char if possible
+     */
+    private char peekNext(){
+        if (current + 1 >= source.length()){
+            return '\0';
+        }
+        return source.charAt(current);
+    }
+
+    /**
      * Handles strings, makes a string until it encounters the next " character
      */
     private void strings(){
@@ -233,5 +252,16 @@ public class Scanner implements IScanner{
             advance();
         }
         addToken(TokenType.NUMBER,line, sb.toString());
+    }
+
+    public void identifiers(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(source.charAt(start));
+        while(!isAtEnd() && ScannerUtils.isAlphaNum(peek())){
+            sb.append(peek());
+            advance();
+        }
+        TokenType kw = ScannerUtils.getTokenType(sb.toString());
+        addToken(kw != null ? kw : TokenType.IDENTIFIER,line, sb.toString());
     }
 }
