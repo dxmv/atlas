@@ -70,24 +70,23 @@ public class Scanner implements IScanner{
             case '/':
                 // handle single-line comments
                 if(!isAtEnd() && matches(peek(),'/')){
-                    boolean newLine = false;
+                    advance();
                     while(!isAtEnd()){
                         if(matches(peek(),'\n')){
-                            newLine = true;
+                            break;
                         }
                         advance();
                     }
-                    if(newLine){
-                        line++;
-                    }
                 }
                 // handle multiline comments
-                else if(matches(peek(),'*')){
+                else if(!isAtEnd() && matches(peek(),'*')){
+                    advance();
                     while(!isAtEnd()){
                         if(matches(peek(),'*')){
                             advance();
                             if(!isAtEnd() && matches(peek(),'/')){
                                 advance();
+                                break;
                             }
                         }
                         if(matches(peek(),'\n')){
