@@ -1,5 +1,8 @@
 package ast; 
 
+import tokenizer.Token;
+
+
 public interface Visitor<R>{
 
 	R visitBinaryExpr(BinaryExpr expr);

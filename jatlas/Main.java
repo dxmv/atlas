@@ -1,7 +1,9 @@
+import ast.*;
 import error.ScanError;
 import tokenizer.IScanner;
 import tokenizer.Scanner;
 import tokenizer.Token;
+import tokenizer.TokenType;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,7 +1,10 @@
 package ast; 
 
+import tokenizer.Token;
+
+
 public class LiteralExpr extends Expr{
-	private Object value;
+	public Object value;
 
 
 

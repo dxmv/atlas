@@ -1,14 +1,14 @@
 import os
 
 GENERATE_FILE="generate.txt"
-FOLDER_PATH = "./test"
+FOLDER_PATH = "../jatlas/ast"
 PACKAGE_NAME = "ast"
 
 def write_package_name(f):
         '''
         Writes package name as first line
         '''
-        f.write(f"package {PACKAGE_NAME}; ")
+        f.write(f"package {PACKAGE_NAME}; \n\nimport tokenizer.Token;\n")
 
 
 def generate_root():
@@ -34,7 +34,7 @@ def generate_class(class_name:str,args:str):
                 f.write(f"\n\npublic class {class_name} extends Expr{{\n")
                 # generate fields
                 for arg in complete_args:
-                        f.write(f"\tprivate {arg};\n")
+                        f.write(f"\tpublic {arg};\n")
                 f.write("\n\n\n")
                 # generate constructor
                 f.write(f"\tpublic {class_name} ({args}){{\n")

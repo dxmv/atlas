@@ -14,5 +14,5 @@
 # 10.09.2025
 - [x] Make a script that will generate the base expression class and other classes that extend it
 - [x] Make the script also generate visitor stuff
-- [ ] Write an AST printer
+- [x] Write an AST printer
 - [ ] Define a visitor class for our syntax tree classes that takes an expression, converts it to RPN and returns the resulting string

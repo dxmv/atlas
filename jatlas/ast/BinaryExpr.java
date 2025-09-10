@@ -1,9 +1,12 @@
 package ast; 
 
+import tokenizer.Token;
+
+
 public class BinaryExpr extends Expr{
-	private Expr left;
-	private Token operator;
-	private Expr right;
+	public Expr left;
+	public Token operator;
+	public Expr right;
 
 
 

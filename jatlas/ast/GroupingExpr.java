@@ -1,7 +1,10 @@
 package ast; 
 
+import tokenizer.Token;
+
+
 public class GroupingExpr extends Expr{
-	private Expr expression;
+	public Expr expression;
 
 
 

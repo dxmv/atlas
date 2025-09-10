@@ -1,8 +1,11 @@
 package ast; 
 
+import tokenizer.Token;
+
+
 public class UnaryExpr extends Expr{
-	private Token operator;
-	private Expr right;
+	public Token operator;
+	public Expr right;
 
 
 
