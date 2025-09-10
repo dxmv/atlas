@@ -12,4 +12,10 @@ public class BinaryExpr extends Expr{
 		this.operator = operator;
 		this.right = right;
 	}
+
+	@Override
+
+	<R> R accept(Visitor<R> visitor) {
+		return visitor.visitBinaryExpr(this);
+	}
 }

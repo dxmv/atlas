@@ -18,18 +18,15 @@ def generate_root():
         with open(f"{FOLDER_PATH}/Expr.java","w") as f:
                 write_package_name(f)
                 f.write("\n\npublic abstract class Expr{\n")
+                f.write("\tabstract <R> R accept(Visitor<R> visitor);\n")
                 f.write("}\n")
 
-def generate_class(line:str):
+def generate_class(class_name:str,args:str):
         '''
         Generate a class, based on the line from file
         line format:
         NAME: ARG_TYPE ARG_NAME, ARG_TYPE ARG_NAME ...
         '''
-        name,args = line.split(":")
-        name = name.strip()
-        args = args.strip()
-        class_name = f"{name}Expr"
         complete_args = [arg.strip() for arg in args.split(",")]
         # crete a file
         with open(f"{FOLDER_PATH}/{class_name}.java","w") as f:
@@ -45,9 +42,25 @@ def generate_class(line:str):
                         name = arg.split(" ")[1].strip()
                         f.write(f"\t\tthis.{name} = {name};\n")
                 f.write(f"\t}}\n")
+
+                # write abstract method
+                f.write(f"\n\t@Override\n")
+                f.write(f"\n\t<R> R accept(Visitor<R> visitor) {{\n")
+                f.write(f"\t\treturn visitor.visit{class_name}(this);\n")
+                f.write(f"\t}}\n")
                 # eof
                 f.write("}\n")
 
+def generate_visitor(class_names):
+        '''
+        Generates the visitor interface
+        '''
+        with open(f"{FOLDER_PATH}/Visitor.java","w") as f:
+                write_package_name(f)
+                f.write("\n\npublic interface Visitor<R>{\n\n")
+                for name in class_names:
+                        f.write(f"\tR visit{name}({name} expr);\n")
+                f.write("\n}\n")
 
 def main():
         # create a folder if needed
@@ -57,10 +70,19 @@ def main():
                 print(f"Folder {FOLDER_PATH} aleady exists")
         # generate super class
         generate_root()
+        # generatoes visitor interface
         # open the generation file and for each line generate a file
         with open(GENERATE_FILE,"r") as f:
+                class_names = []
                 for line in f.readlines():
-                        generate_class(line)
+                        name,args = line.split(":")
+                        name = name.strip()
+                        args = args.strip()
+                        class_name = f"{name}Expr"
+                        generate_class(class_name,args)
+                        class_names.append(class_name)
+        # generate visitor
+        generate_visitor(class_names)
         
         
         
