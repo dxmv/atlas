@@ -21,7 +21,7 @@ public class Parser {
     }
 
     private Expr expression(){
-        return equality();
+        return comma();
     }
 
     private boolean match(TokenType... types) {
@@ -97,6 +97,16 @@ public class Parser {
         while (match(BANG_EQUAL,EQUAL_EQUAL)){
             Token operator = previous();
             Expr expr1 = comparison();
+            expr = new BinaryExpr(expr, operator, expr1);
+        }
+        return expr;
+    }
+
+    private Expr comma(){
+        Expr expr = equality();
+        while (match(COMMA)){
+            Token operator = previous();
+            Expr expr1 = equality();
             expr = new BinaryExpr(expr, operator, expr1);
         }
         return expr;
