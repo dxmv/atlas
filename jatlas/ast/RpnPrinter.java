@@ -9,7 +9,7 @@ public class RpnPrinter implements Visitor<String>{
 
     @Override
     public String visitGroupingExpr(GroupingExpr expr) {
-        return expr.expression.accept(this);
+        return "(" + expr.expression.accept(this);
     }
 
     @Override

@@ -13,7 +13,7 @@ public class AstPrinter implements Visitor<String> {
 
     @Override
     public String visitLiteralExpr(LiteralExpr expr) {
-        return expr.toString();
+        return expr.value.toString();
     }
 
     @Override

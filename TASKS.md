@@ -17,4 +17,5 @@
 - [x] Write an AST printer
 
 # 11.09.2025
-- [ ] Define a visitor class for our syntax tree classes that takes an expression, converts it to RPN and returns the resulting string
+- [x] Define a visitor class for our syntax tree classes that takes an expression, converts it to RPN and returns the resulting string
+- [ ] Build a recursive desent parser

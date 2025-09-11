@@ -18,3 +18,10 @@
 - [x] Make the script also generate visitor stuff
 - [x] Write an AST printer
 - [x] Define a visitor class for our syntax tree classes that takes an expression, converts it to RPN and returns the resulting string
+
+### Phase 4 - Parser
+- [x] Build a recursive desent parser
+- [ ] Add support for comma expressions
+- [ ] Add support for ternary '?' operator
+- [ ] Error handling
+
