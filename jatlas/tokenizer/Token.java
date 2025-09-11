@@ -15,4 +15,16 @@ public class Token {
     public String toString() {
         return "<" + type.toString() + "> " + value + " " + line;
     }
+
+    public TokenType getType() {
+        return type;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public Object getValue() {
+        return value;
+    }
 }
