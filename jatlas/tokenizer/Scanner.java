@@ -245,16 +245,13 @@ public class Scanner implements IScanner{
     }
 
     /**
-     * Handles numbers, makes a number until it encounters the new line
+     * Handles numbers, makes a number until it encounters a non-digit character
      */
     private void numbers(){
         StringBuilder sb = new StringBuilder();
         sb.append(source.charAt(start));
         int numDots = 1; // we can only have 1 dot in number
-        while(!isAtEnd()){
-            if(matches(peek(),'\n')){
-                break;
-            }
+        while(!isAtEnd() && (ScannerUtils.isDigit(peek()) || matches(peek(),'.'))){
             if(matches(peek(),'.')){
                 // TODO: throw error here
                 if(numDots <= 0){

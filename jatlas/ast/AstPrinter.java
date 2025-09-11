@@ -3,7 +3,7 @@ package ast;
 public class AstPrinter implements Visitor<String> {
     @Override
     public String visitBinaryExpr(BinaryExpr expr) {
-        return parenthesize(expr.operator.toString(),expr.left,expr.right);
+        return parenthesize((String) expr.operator.getValue(),expr.left,expr.right);
     }
 
     @Override
@@ -18,7 +18,7 @@ public class AstPrinter implements Visitor<String> {
 
     @Override
     public String visitUnaryExpr(UnaryExpr expr) {
-        return parenthesize(expr.operator.toString(), expr.right);
+        return parenthesize((String) expr.operator.getValue(), expr.right);
     }
 
     public String print(Expr expression) {

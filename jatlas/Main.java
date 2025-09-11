@@ -29,9 +29,7 @@ public class Main {
                 }
                 return;
             }
-            for(Token token : tokens){
-                System.out.println(token);
-            }
+
             Parser parser = new Parser(tokens);
             Expr expression = parser.parse();
             System.out.println(new AstPrinter().print(expression));
