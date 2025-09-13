@@ -264,7 +264,7 @@ public class Scanner implements IScanner{
             advance();
         }
         String literal = sb.toString();
-        addToken(TokenType.NUMBER,line, literal,Integer.parseInt(literal));
+        addToken(TokenType.NUMBER,line, literal,Double.parseDouble(literal));
     }
 
     public void identifiers(){
