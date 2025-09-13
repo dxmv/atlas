@@ -18,4 +18,11 @@
 
 # 11.09.2025
 - [x] Define a visitor class for our syntax tree classes that takes an expression, converts it to RPN and returns the resulting string
-- [ ] Build a recursive desent parser
+- [x] Build a recursive desent parser
+- [x] Add support for comma expressions
+
+# 13.09.2025
+- [x] Make tokenizer use literals and values
+- [x] Build an interpreter class
+- [ ] For '+' if one of operands is a string and the other is number, the result should be a string, like 'test' + 123 -> 'test123'
+- [ ] Division by 0 error

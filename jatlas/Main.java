@@ -32,7 +32,8 @@ public class Main {
 
             Parser parser = new Parser(tokens);
             Expr expression = parser.parse();
-            System.out.println(new AstPrinter().print(expression));
+            Interpreter interpreter = new Interpreter();
+            interpreter.interpret(expression);
         }
         catch (Exception e){
             e.printStackTrace();

@@ -29,7 +29,7 @@ public class Scanner implements IScanner{
             start = current;
             scanToken();
         }
-        addToken(TokenType.EOF,line,"");
+        addToken(TokenType.EOF,line,null,null);
         return tokens;
     }
 
@@ -41,34 +41,34 @@ public class Scanner implements IScanner{
         switch (c){
             // single chars
             case '(':
-                addToken(TokenType.LEFT_PAREN,line,"(");
+                addToken(TokenType.LEFT_PAREN,line,"(",null);
                 break;
             case ')':
-                addToken(TokenType.RIGHT_PAREN,line,")");
+                addToken(TokenType.RIGHT_PAREN,line,")",null);
                 break;
             case '{':
-                addToken(TokenType.LEFT_BRACE,line,"{");
+                addToken(TokenType.LEFT_BRACE,line,"{",null);
                 break;
             case '}':
-                addToken(TokenType.RIGHT_BRACE,line,"}");
+                addToken(TokenType.RIGHT_BRACE,line,"}",null);
                 break;
             case '+':
-                addToken(TokenType.PLUS,line,"+");
+                addToken(TokenType.PLUS,line,"+",null);
                 break;
             case '-':
-                addToken(TokenType.MINUS,line,"-");
+                addToken(TokenType.MINUS,line,"-",null);
                 break;
             case '*':
-                addToken(TokenType.STAR,line,"*");
+                addToken(TokenType.STAR,line,"*",null);
                 break;
             case '.':
-                addToken(TokenType.DOT,line,".");
+                addToken(TokenType.DOT,line,".",null);
                 break;
             case ',':
-                addToken(TokenType.COMMA,line,",");
+                addToken(TokenType.COMMA,line,",",null);
                 break;
             case ';':
-                addToken(TokenType.SEMICOLON,line,";");
+                addToken(TokenType.SEMICOLON,line,";",null);
                 break;
             // handle double chars
             case '/':
@@ -106,40 +106,40 @@ public class Scanner implements IScanner{
                         advance();
                     }
                 } else {
-                    addToken(TokenType.SLASH, line, "/");
+                    addToken(TokenType.SLASH, line, "/",null);
                 }
                 break;
             case '=':
                 if(matches(peek(),'=')){
-                    addToken(TokenType.EQUAL_EQUAL,line,"==");
+                    addToken(TokenType.EQUAL_EQUAL,line,"==",null);
                     advance();
                 }
                 else {
-                    addToken(TokenType.EQUAL, line, "=");
+                    addToken(TokenType.EQUAL, line, "=",null);
                 }
                 break;
             case '!':
                 if(matches(peek(),'=')){
-                    addToken(TokenType.BANG_EQUAL,line,"!=");
+                    addToken(TokenType.BANG_EQUAL,line,"!=",null);
                     advance();
                 } else {
-                    addToken(TokenType.BANG, line, "!");
+                    addToken(TokenType.BANG, line, "!",null);
                 }
                 break;
             case '>':
                 if(matches(peek(),'=')){
-                    addToken(TokenType.GREATER_EQUAL,line,">=");
+                    addToken(TokenType.GREATER_EQUAL,line,">=",null);
                     advance();
                 } else{
-                    addToken(TokenType.GREATER,line,">");
+                    addToken(TokenType.GREATER,line,">",null);
                 }
                 break;
             case '<':
                 if(matches(peek(),'=')){
-                    addToken(TokenType.LESS_EQUAL,line,"<=");
+                    addToken(TokenType.LESS_EQUAL,line,"<=",null);
                     advance();
                 } else {
-                    addToken(TokenType.LESS, line, "<");
+                    addToken(TokenType.LESS, line, "<",null);
                 }
                 break;
             // handle line breaks
@@ -191,8 +191,8 @@ public class Scanner implements IScanner{
      * @param line
      * @param value
      */
-    private void addToken(TokenType type, int line, Object value){
-            this.tokens.add(new Token(type, line, value));
+    private void addToken(TokenType type, int line, String literal, Object value){
+            this.tokens.add(new Token(type, line, literal, value));
     }
 
     /**
@@ -241,7 +241,8 @@ public class Scanner implements IScanner{
             sb.append(peek());
             advance();
         }
-        addToken(TokenType.STRING,line, sb.toString());
+        String literal = sb.toString();
+        addToken(TokenType.STRING,line, literal, literal.substring(1, literal.length()-1));
     }
 
     /**
@@ -262,7 +263,8 @@ public class Scanner implements IScanner{
             sb.append(peek());
             advance();
         }
-        addToken(TokenType.NUMBER,line, sb.toString());
+        String literal = sb.toString();
+        addToken(TokenType.NUMBER,line, literal,Integer.parseInt(literal));
     }
 
     public void identifiers(){
@@ -273,7 +275,7 @@ public class Scanner implements IScanner{
             advance();
         }
         TokenType kw = ScannerUtils.getTokenType(sb.toString());
-        addToken(kw != null ? kw : TokenType.IDENTIFIER,line, sb.toString());
+        addToken(kw != null ? kw : TokenType.IDENTIFIER,line, sb.toString(),null);
     }
 
     public List<ScanError> getErrors() {
