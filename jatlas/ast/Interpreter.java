@@ -70,7 +70,10 @@ public class Interpreter implements Visitor<Object> {
             return  (double)left + (double)right;
         }
         if(left instanceof String && right instanceof String) {
-            return (String)left + (String)right;
+            return left.toString() + right.toString();
+        }
+        if(left instanceof Double && right instanceof String || left instanceof String && right instanceof Double) {
+            return left.toString() + right.toString();
         }
         return null;
     }
