@@ -12,7 +12,7 @@ public class Interpreter implements Visitor<Object> {
         Object right = expr.right.accept(this);
         return switch (op.getType()){
             case MINUS -> (double) left - (double) right;
-            case SLASH -> (double) left / (double) right;
+            case SLASH -> handleDivision((double) left, (double) right);
             case STAR -> (double) left * (double) right;
             case GREATER -> (double) left > (double) right;
             case LESS -> (double) left < (double) right;
@@ -88,6 +88,14 @@ public class Interpreter implements Visitor<Object> {
         if(left == null && right == null) return true;
         if(left == null || right == null) return false;
         return left.equals(right);
+    }
+
+    public double handleDivision(double left, double right) {
+        if(right == 0.0){
+            // TODO: throw runtime error here
+            return 0;
+        }
+        return left / right;
     }
 
     public void interpret(Expr expression){
