@@ -23,7 +23,7 @@
 - [x] Build a recursive desent parser
 - [x] Add support for comma expressions
 - [ ] Add support for ternary '?' operator
-- [ ] Parser errors
+- [x] Parser errors
 
 ### Phase 5 - Evaluating Expressions
 - [x] Make tokenizer use literals and values
@@ -31,7 +31,7 @@
 - [x] For '+', if one of operands is a string and the other is number, the result should be a string, like 'test' + 123 -> 'test123'
 - [x] Division by 0 error
 - [ ] Better number handling
-- [ ] Runtime errors
+- [x] Runtime errors
 
 ### Phase 6 - Statment & State
 

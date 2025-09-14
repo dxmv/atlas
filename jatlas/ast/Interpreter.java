@@ -1,8 +1,7 @@
 package ast;
 
+import error.RuntimeError;
 import tokenizer.Token;
-
-import java.beans.Expression;
 
 public class Interpreter implements Visitor<Object> {
     @Override
@@ -10,19 +9,39 @@ public class Interpreter implements Visitor<Object> {
         Token op = expr.operator;
         Object left = expr.left.accept(this);
         Object right = expr.right.accept(this);
-        return switch (op.getType()){
-            case MINUS -> (double) left - (double) right;
-            case SLASH -> handleDivision((double) left, (double) right);
-            case STAR -> (double) left * (double) right;
-            case GREATER -> (double) left > (double) right;
-            case LESS -> (double) left < (double) right;
-            case GREATER_EQUAL -> (double) left >= (double) right;
-            case LESS_EQUAL -> (double) left <= (double) right;
-            case PLUS -> handlePlus(left, right);
-            case EQUAL_EQUAL -> isEqual(left,right);
-            case BANG_EQUAL -> !isEqual(left,right);
-            default -> null;
-        };
+
+        switch (op.getType()){
+            case MINUS:
+                checkNumberOperands(op, left, right);
+                return (double) left - (double) right;
+            case SLASH:
+                checkNumberOperands(op, left, right);
+                return handleDivision(op, (double) left, (double) right);
+            case STAR:
+                checkNumberOperands(op, left, right);
+                return (double) left * (double) right;
+            case GREATER:
+                checkNumberOperands(op, left, right);
+                return (double) left > (double) right;
+            case LESS:
+                checkNumberOperands(op, left, right);
+                return (double) left < (double) right;
+            case GREATER_EQUAL:
+                checkNumberOperands(op, left, right);
+                return (double) left >= (double) right;
+            case LESS_EQUAL:
+                checkNumberOperands(op, left, right);
+                return (double) left <= (double) right;
+            case PLUS:
+                return handlePlus(op, left, right);
+            case EQUAL_EQUAL:
+                return isEqual(left,right);
+            case BANG_EQUAL:
+                return !isEqual(left,right);
+            default:
+                // Unreachable.
+                return null;
+        }
     }
 
 
@@ -39,12 +58,18 @@ public class Interpreter implements Visitor<Object> {
     @Override
     public Object visitUnaryExpr(UnaryExpr expr) {
         Token op = expr.operator;
-        Object res = expr.accept(this);
-        return switch (op.getType()) {
-            case MINUS -> (double) res * -1;
-            case BANG -> !isTruthy(res);
-            default -> null;
-        };
+        Object right = expr.right.accept(this);
+
+        switch (op.getType()) {
+            case MINUS:
+                checkNumberOperand(op, right);
+                return -(double)right;
+            case BANG:
+                return !isTruthy(right);
+            default:
+                // Unreachable.
+                return null;
+        }
     }
 
     /**
@@ -65,17 +90,17 @@ public class Interpreter implements Visitor<Object> {
      * @param right
      * @return
      */
-    public Object handlePlus(Object left, Object right) {
+    public Object handlePlus(Token op, Object left, Object right) {
         if (left instanceof Double && right instanceof Double) {
             return  (double)left + (double)right;
         }
         if(left instanceof String && right instanceof String) {
-            return left.toString() + right.toString();
+            return left + (String)right;
         }
         if(left instanceof Double && right instanceof String || left instanceof String && right instanceof Double) {
             return left.toString() + right.toString();
         }
-        return null;
+        throw new RuntimeError(op, "Operands must be two numbers or two strings.");
     }
 
     /**
@@ -90,16 +115,25 @@ public class Interpreter implements Visitor<Object> {
         return left.equals(right);
     }
 
-    public double handleDivision(double left, double right) {
+    public double handleDivision(Token op, double left, double right) {
         if(right == 0.0){
-            // TODO: throw runtime error here
-            return 0;
+            throw new RuntimeError(op, "Division by zero.");
         }
         return left / right;
     }
 
-    public void interpret(Expr expression){
+    public void interpret(Expr expression) throws RuntimeError {
         Object result = expression.accept(this);
-        System.out.printf(result.toString());
+        System.out.println(result.toString());
+    }
+
+    private void checkNumberOperand(Token operator, Object operand) {
+        if (operand instanceof Double) return;
+        throw new RuntimeError(operator, "Operand must be a number.");
+    }
+
+    private void checkNumberOperands(Token operator, Object left, Object right) {
+        if (left instanceof Double && right instanceof Double) return;
+        throw new RuntimeError(operator, "Operands must be numbers.");
     }
 }

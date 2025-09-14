@@ -1,4 +1,6 @@
 import ast.*;
+import error.ErrorReporter;
+import error.RuntimeError;
 import error.ScanError;
 import parser.Parser;
 import tokenizer.IScanner;
@@ -34,6 +36,9 @@ public class Main {
             Expr expression = parser.parse();
             Interpreter interpreter = new Interpreter();
             interpreter.interpret(expression);
+        }
+        catch (RuntimeError err){
+            ErrorReporter.error(err.getToken().getLine(), err.getMessage());
         }
         catch (Exception e){
             e.printStackTrace();
