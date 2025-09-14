@@ -60,16 +60,16 @@ public class Interpreter implements Visitor<Object> {
         Token op = expr.operator;
         Object right = expr.right.accept(this);
 
-        switch (op.getType()) {
-            case MINUS:
+        return switch (op.getType()) {
+            case MINUS -> {
                 checkNumberOperand(op, right);
-                return -(double)right;
-            case BANG:
-                return !isTruthy(right);
-            default:
+                yield -(double) right;
+            }
+            case BANG -> !isTruthy(right);
+            default ->
                 // Unreachable.
-                return null;
-        }
+                    null;
+        };
     }
 
     /**
@@ -98,7 +98,7 @@ public class Interpreter implements Visitor<Object> {
             return left + (String)right;
         }
         if(left instanceof Double && right instanceof String || left instanceof String && right instanceof Double) {
-            return left.toString() + right.toString();
+            return stringify(left) + stringify(right);
         }
         throw new RuntimeError(op, "Operands must be two numbers or two strings.");
     }
@@ -124,7 +124,7 @@ public class Interpreter implements Visitor<Object> {
 
     public void interpret(Expr expression) throws RuntimeError {
         Object result = expression.accept(this);
-        System.out.println(result.toString());
+        System.out.println(stringify(result));
     }
 
     private void checkNumberOperand(Token operator, Object operand) {
@@ -135,5 +135,19 @@ public class Interpreter implements Visitor<Object> {
     private void checkNumberOperands(Token operator, Object left, Object right) {
         if (left instanceof Double && right instanceof Double) return;
         throw new RuntimeError(operator, "Operands must be numbers.");
+    }
+
+    /**
+     * Used to turn object into string in interpreter
+     * @param res
+     * @return
+     */
+    private String stringify(Object res){
+        if(res == null) return "nil";
+        // check if a decimal result is a whole number
+        if((res instanceof Double r) && r%1==0){
+            return (int)Math.floor(r) + "";
+        }
+        return res.toString();
     }
 }

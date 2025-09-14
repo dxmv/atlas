@@ -31,4 +31,4 @@
 - [x] Tokenizer errors
 - [x] Parser errors
 - [x] Runtime errors
-- [ ] Better number handling in interpreter
+- [x] Better number handling in interpreter
