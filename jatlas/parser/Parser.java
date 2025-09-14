@@ -1,6 +1,7 @@
 package parser;
 
 import ast.*;
+import error.ErrorReporter;
 import tokenizer.Token;
 import tokenizer.TokenType;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import static tokenizer.TokenType.*;
 
 public class Parser {
+    private static class ParseError extends RuntimeException {}
     private final List<Token> tokens;
     private int current = 0;
 
@@ -50,7 +52,8 @@ public class Parser {
             consume(RIGHT_PAREN, "Expect ')' after expression.");
             return new GroupingExpr(expr);
         }
-        return null;
+
+        throw error(peek(), "Expect expression.");
     }
 
     private Expr unary(){
@@ -113,13 +116,12 @@ public class Parser {
     }
 
     // helpers
-    private void consume(TokenType type, String message) {
+    private Token consume(TokenType type, String message) {
         if(check(type)) {
-            advance();
+            return advance();
         }
-        else{
-            System.out.println(message);
-        }
+
+        throw error(peek(), message);
     }
 
     private boolean isAtEnd(){
@@ -137,5 +139,10 @@ public class Parser {
     private Token advance() {
         if (!isAtEnd()) current++;
         return previous();
+    }
+
+    private ParseError error(Token token, String message) {
+        ErrorReporter.error(token, message);
+        return new ParseError();
     }
 }

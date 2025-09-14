@@ -29,6 +29,6 @@
 
 # 14.09.2025
 - [x] Tokenizer errors
-- [ ] Parser errors
+- [x] Parser errors
 - [ ] Runtime errors
 - [ ] Better number handling in interpreter
