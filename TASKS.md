@@ -24,5 +24,11 @@
 # 13.09.2025
 - [x] Make tokenizer use literals and values
 - [x] Build an interpreter class
-- [ ] For '+' if one of operands is a string and the other is number, the result should be a string, like 'test' + 123 -> 'test123'
-- [ ] Division by 0 error
+- [x] For '+' if one of operands is a string and the other is number, the result should be a string, like 'test' + 123 -> 'test123'
+- [x] Division by 0 error
+
+# 14.09.2025
+- [x] Tokenizer errors
+- [ ] Parser errors
+- [ ] Runtime errors
+- [ ] Better number handling in interpreter

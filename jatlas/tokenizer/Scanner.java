@@ -105,6 +105,9 @@ public class Scanner implements IScanner{
                         }
                         advance();
                     }
+                    if (depth > 0) {
+                        errors.add(new ScanError(ScanErrorTypes.UNTERMINATED_COMMENT, line, "Unterminated multiline comment."));
+                    }
                 } else {
                     addToken(TokenType.SLASH, line, "/",null);
                 }
@@ -230,19 +233,21 @@ public class Scanner implements IScanner{
         sb.append('\"'); // append the first "
         while(!isAtEnd()){
             if(matches(peek(),'\n')){
-                errors.add(new ScanError(ScanErrorTypes.UNTERMINATED_STRING,line,"You haven't terminated the string"));
+                errors.add(new ScanError(ScanErrorTypes.UNTERMINATED_STRING,line,"Multiline strings are not supported."));
                 return;
             }
             if(matches(peek(),'\"')){
                 sb.append(peek());
                 advance();
-                break;
+                String literal = sb.toString();
+                addToken(TokenType.STRING,line, literal, literal.substring(1, literal.length()-1));
+                return;
             }
             sb.append(peek());
             advance();
         }
-        String literal = sb.toString();
-        addToken(TokenType.STRING,line, literal, literal.substring(1, literal.length()-1));
+
+        errors.add(new ScanError(ScanErrorTypes.UNTERMINATED_STRING, line, "Unterminated string."));
     }
 
     /**
@@ -254,8 +259,10 @@ public class Scanner implements IScanner{
         int numDots = 1; // we can only have 1 dot in number
         while(!isAtEnd() && (ScannerUtils.isDigit(peek()) || matches(peek(),'.'))){
             if(matches(peek(),'.')){
-                // TODO: throw error here
                 if(numDots <= 0){
+                    errors.add(new ScanError(ScanErrorTypes.INVALID_NUMBER, line, "Invalid number format."));
+                    // Consume the rest of what might be a number to prevent cascade errors
+                    while (!isAtEnd() && ScannerUtils.isDigit(peek())) advance();
                     return;
                 }
                 numDots--;

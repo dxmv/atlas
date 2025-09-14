@@ -11,7 +11,7 @@
 - [x] Tokenize identifiers
 - [x] Tokenize keywords
 - [x] Allow nested multiline comments
-- [ ] Tokenizer errors
+- [x] Tokenizer errors
 
 ### Phase 3 - Representing code
 - [x] Make a script that will generate the base expression class and other classes that extend it
@@ -25,12 +25,14 @@
 - [ ] Add support for ternary '?' operator
 - [ ] Parser errors
 
-### Phase 5 - Executing expressions
+### Phase 5 - Evaluating Expressions
 - [x] Make tokenizer use literals and values
 - [x] Build an interpreter class
-- [ ] For '+', if one of operands is a string and the other is number, the result should be a string, like 'test' + 123 -> 'test123'
-- [ ] Division by 0 error
+- [x] For '+', if one of operands is a string and the other is number, the result should be a string, like 'test' + 123 -> 'test123'
+- [x] Division by 0 error
+- [ ] Better number handling
 - [ ] Runtime errors
 
+### Phase 6 - Statment & State
 
 
