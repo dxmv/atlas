@@ -33,9 +33,9 @@ public class Main {
             }
 
             Parser parser = new Parser(tokens);
-            Expr expression = parser.parse();
+            List<Stmt> stmts = parser.parse();
             Interpreter interpreter = new Interpreter();
-            interpreter.interpret(expression);
+            interpreter.interpret(stmts);
         }
         catch (RuntimeError err){
             ErrorReporter.error(err.getToken().getLine(), err.getMessage());

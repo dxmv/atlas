@@ -21,7 +21,7 @@
 
 ### Phase 4 - Parser
 - [x] Build a recursive desent parser
-- [x] Add support for comma expressions
+- [ ] Add support for comma expressions
 - [ ] Add support for ternary '?' operator
 - [x] Parser errors
 
@@ -35,7 +35,7 @@
 
 ### Phase 6 - Statment & State
 - [x] Generate statment classes
-- [ ] Implement print statements
+- [x] Implement print statements
 - [ ] Implement declaration statements
 - [ ] Implement global state
 

@@ -3,6 +3,8 @@ package ast;
 import error.RuntimeError;
 import tokenizer.Token;
 
+import java.util.List;
+
 public class Interpreter implements Visitor<Object> {
     @Override
     public Object visitBinaryExpr(BinaryExpr expr) {
@@ -72,6 +74,18 @@ public class Interpreter implements Visitor<Object> {
         };
     }
 
+    @Override
+    public Object visitPrintStmt(PrintStmt expr) {
+        Object value = expr.expression.accept(this);
+        System.out.println(stringify(value));
+        return null;
+    }
+
+    @Override
+    public Object visitExpressionStmt(ExpressionStmt expr) {
+        return expr.expression.accept(this);
+    }
+
     /**
      * Only false & null values are false, everything else is true
      * @param res
@@ -122,9 +136,10 @@ public class Interpreter implements Visitor<Object> {
         return left / right;
     }
 
-    public void interpret(Expr expression) throws RuntimeError {
-        Object result = expression.accept(this);
-        System.out.println(stringify(result));
+    public void interpret(List<Stmt> stmts) throws RuntimeError {
+        for (Stmt stmt : stmts) {
+            stmt.accept(this);
+        }
     }
 
     private void checkNumberOperand(Token operator, Object operand) {

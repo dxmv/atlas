@@ -22,6 +22,16 @@ public class RpnPrinter implements Visitor<String>{
         return expr.right.accept(this) + " " + expr.operator.getValue();
     }
 
+    @Override
+    public String visitPrintStmt(PrintStmt expr) {
+        return "";
+    }
+
+    @Override
+    public String visitExpressionStmt(ExpressionStmt expr) {
+        return "";
+    }
+
     public String print(Expr expression) {
         return expression.accept(this);
     }

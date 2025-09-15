@@ -5,6 +5,7 @@ import error.ErrorReporter;
 import tokenizer.Token;
 import tokenizer.TokenType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static tokenizer.TokenType.*;
@@ -18,12 +19,45 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    public Expr parse() {
-        return expression();
+    public List<Stmt> parse() {
+        List<Stmt> statements = new ArrayList<>();
+        // go until the at end of file
+        while(!isAtEnd()){
+            Stmt stmt = statement();
+            statements.add(stmt);
+        }
+        return statements;
     }
 
+    /**
+     * Top level of tree for now
+     * @return the appropriate print
+     */
+    private Stmt statement(){
+        if(match(PRINT)) return printStatement();
+        return expressionStatement();
+    }
+
+    private PrintStmt printStatement(){
+        Expr value = expression();
+        consume(SEMICOLON, "Expect ';' after value.");
+        return new PrintStmt(value);
+    }
+
+
+    private ExpressionStmt expressionStatement() {
+        Expr value = expression();
+        consume(SEMICOLON, "Expect ';' after expression.");
+        return new ExpressionStmt(value);
+    }
+
+    /**
+     * Top level of expressions
+     * @param
+     * @return
+     */
     private Expr expression(){
-        return comma();
+        return equality();
     }
 
     private boolean match(TokenType... types) {
@@ -42,6 +76,7 @@ public class Parser {
         return peek().getType() == type;
     }
 
+    // expressions handling
     private Expr primary(){
         if(match(TRUE)) { return new LiteralExpr(true); }
         if(match(FALSE)) { return new LiteralExpr(false); }
@@ -105,15 +140,6 @@ public class Parser {
         return expr;
     }
 
-    private Expr comma(){
-        Expr expr = equality();
-        while (match(COMMA)){
-            Token operator = previous();
-            Expr expr1 = equality();
-            expr = new BinaryExpr(expr, operator, expr1);
-        }
-        return expr;
-    }
 
     // helpers
     private Token consume(TokenType type, String message) {

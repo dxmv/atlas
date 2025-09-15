@@ -21,6 +21,7 @@ public  class ScannerUtils {
         KEYWORDS.put("nil", TokenType.NIL);
         KEYWORDS.put("this", TokenType.THIS);
         KEYWORDS.put("super", TokenType.SUPER);
+        KEYWORDS.put("print",TokenType.PRINT);
     }
 
     public static boolean isDigit(char c){

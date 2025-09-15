@@ -35,6 +35,6 @@
 
 # 15.09.2025
 - [x] Generate statment classes
-- [ ] Implement print statements
+- [x] Implement print statements
 - [ ] Implement declaration statements
 - [ ] Implement global state
