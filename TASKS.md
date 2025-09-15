@@ -32,3 +32,9 @@
 - [x] Parser errors
 - [x] Runtime errors
 - [x] Better number handling in interpreter
+
+# 15.09.2025
+- [x] Generate statment classes
+- [ ] Implement print statements
+- [ ] Implement declaration statements
+- [ ] Implement global state

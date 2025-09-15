@@ -30,9 +30,14 @@
 - [x] Build an interpreter class
 - [x] For '+', if one of operands is a string and the other is number, the result should be a string, like 'test' + 123 -> 'test123'
 - [x] Division by 0 error
-- [ ] Better number handling
+- [x] Better number handling
 - [x] Runtime errors
 
 ### Phase 6 - Statment & State
+- [x] Generate statment classes
+- [ ] Implement print statements
+- [ ] Implement declaration statements
+- [ ] Implement global state
+
 
 
