@@ -23,15 +23,30 @@ public class Parser {
         List<Stmt> statements = new ArrayList<>();
         // go until the at end of file
         while(!isAtEnd()){
-            Stmt stmt = statement();
+            Stmt stmt = declare();
             statements.add(stmt);
         }
         return statements;
     }
 
     /**
-     * Top level of tree for now
-     * @return the appropriate print
+     *
+     * @return
+     */
+    private Stmt declare() {
+        if(match(VAR)) return declareStmt();
+        return statement();
+    }
+
+    private DeclareStmt declareStmt() {
+        Token id = consume(IDENTIFIER,"Expected identifier");
+        if(match(EQUAL)) return new DeclareStmt(expression(),id.getLiteral());
+        return new DeclareStmt(expression(),"nil");
+    }
+
+    /**
+     * Top level of statment tree
+     * @return the appropriate statement
      */
     private Stmt statement(){
         if(match(PRINT)) return printStatement();
@@ -81,7 +96,8 @@ public class Parser {
         if(match(TRUE)) { return new LiteralExpr(true); }
         if(match(FALSE)) { return new LiteralExpr(false); }
         if(match(NIL)) { return new LiteralExpr(null); }
-        if(match(NUMBER,STRING)) {return new LiteralExpr(previous().getValue()); }
+        if(match(NUMBER,STRING)) { return new LiteralExpr(previous().getValue()); }
+        if(match(IDENTIFIER)) { return new LiteralExpr(previous().getValue()); }
         if(match(LEFT_PAREN)){
             Expr expr = expression();
             consume(RIGHT_PAREN, "Expect ')' after expression.");

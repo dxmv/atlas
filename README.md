@@ -38,6 +38,7 @@
 - [x] Implement print statements
 - [ ] Implement declaration statements
 - [ ] Implement global state
+- [ ] Implement assigment statemnts
 
 
 

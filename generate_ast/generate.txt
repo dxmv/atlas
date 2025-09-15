@@ -4,3 +4,4 @@ Literal: Object value < Expr
 Unary: Token operator, Expr right < Expr
 Print: Expr expression < Stmt
 Expression: Expr expression < Stmt
+Declare: Expr expression, String name < Stmt

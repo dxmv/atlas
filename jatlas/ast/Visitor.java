@@ -11,5 +11,6 @@ public interface Visitor<R>{
 	R visitUnaryExpr(UnaryExpr expr);
 	R visitPrintStmt(PrintStmt expr);
 	R visitExpressionStmt(ExpressionStmt expr);
+	R visitDeclareStmt(DeclareStmt expr);
 
 }

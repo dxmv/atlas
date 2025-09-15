@@ -86,6 +86,11 @@ public class Interpreter implements Visitor<Object> {
         return expr.expression.accept(this);
     }
 
+    @Override
+    public Object visitDeclareStmt(DeclareStmt expr) {
+        return null;
+    }
+
     /**
      * Only false & null values are false, everything else is true
      * @param res
