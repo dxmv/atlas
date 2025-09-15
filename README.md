@@ -36,8 +36,8 @@
 ### Phase 6 - Statment & State
 - [x] Generate statment classes
 - [x] Implement print statements
-- [ ] Implement declaration statements
-- [ ] Implement global state
+- [x] Implement declaration statements
+- [x] Implement global state
 - [ ] Implement assigment statemnts
 
 

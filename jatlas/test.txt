@@ -1,2 +1,2 @@
-var test = 1 + 2;
+var test = 3 == 2;
 print test;

@@ -6,6 +6,8 @@ import tokenizer.Token;
 import java.util.List;
 
 public class Interpreter implements Visitor<Object> {
+    private Environment environment = new Environment();
+
     @Override
     public Object visitBinaryExpr(BinaryExpr expr) {
         Token op = expr.operator;
@@ -75,6 +77,11 @@ public class Interpreter implements Visitor<Object> {
     }
 
     @Override
+    public Object visitVariableExpr(VariableExpr expr) {
+        return environment.get(expr.identifier);
+    }
+
+    @Override
     public Object visitPrintStmt(PrintStmt expr) {
         Object value = expr.expression.accept(this);
         System.out.println(stringify(value));
@@ -88,6 +95,8 @@ public class Interpreter implements Visitor<Object> {
 
     @Override
     public Object visitDeclareStmt(DeclareStmt expr) {
+        String id = expr.name;
+        environment.put(id, expr.expression.accept(this));
         return null;
     }
 

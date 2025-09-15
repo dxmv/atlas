@@ -23,12 +23,22 @@ public class RpnPrinter implements Visitor<String>{
     }
 
     @Override
+    public String visitVariableExpr(VariableExpr expr) {
+        return "";
+    }
+
+    @Override
     public String visitPrintStmt(PrintStmt expr) {
         return "";
     }
 
     @Override
     public String visitExpressionStmt(ExpressionStmt expr) {
+        return "";
+    }
+
+    @Override
+    public String visitDeclareStmt(DeclareStmt expr) {
         return "";
     }
 

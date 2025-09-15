@@ -40,8 +40,15 @@ public class Parser {
 
     private DeclareStmt declareStmt() {
         Token id = consume(IDENTIFIER,"Expected identifier");
-        if(match(EQUAL)) return new DeclareStmt(expression(),id.getLiteral());
-        return new DeclareStmt(expression(),"nil");
+        Expr expr;
+        if(match(EQUAL)) {
+            expr = expression();
+        }
+        else{
+            expr = new LiteralExpr("null");
+        }
+        consume(SEMICOLON,"Expect ';'.");
+        return new DeclareStmt(expr, id.getLiteral());
     }
 
     /**
@@ -97,7 +104,7 @@ public class Parser {
         if(match(FALSE)) { return new LiteralExpr(false); }
         if(match(NIL)) { return new LiteralExpr(null); }
         if(match(NUMBER,STRING)) { return new LiteralExpr(previous().getValue()); }
-        if(match(IDENTIFIER)) { return new LiteralExpr(previous().getValue()); }
+        if(match(IDENTIFIER)) { return new VariableExpr(previous().getLiteral()); }
         if(match(LEFT_PAREN)){
             Expr expr = expression();
             consume(RIGHT_PAREN, "Expect ')' after expression.");
