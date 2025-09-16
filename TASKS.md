@@ -41,7 +41,7 @@
 
 # 16.09.2025
 - [x] Implement assigment statemnts
-- [ ] Implement block scope
+- [x] Implement block scope
 - [ ] REPL no longer supports entering a single expression and printing it's result value, fix it
 - [ ] Make it a runtime error to acess a varaible that has not been initiliazed
 

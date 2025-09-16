@@ -76,7 +76,7 @@ def main():
         with open(GENERATE_FILE,"r") as f:
                 class_names = []
                 for line in f.readlines():
-                        normal_name,base = line.split("<")
+                        normal_name,base = line.split(";")
                         base = base.strip()
                         name,args = normal_name.split(":")
                         name = name.strip()

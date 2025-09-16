@@ -106,6 +106,17 @@ public class Interpreter implements Visitor<Object> {
         return null;
     }
 
+    @Override
+    public Object visitBlockStmt(BlockStmt expr) {
+        Environment previous = environment;
+        environment = new Environment(environment);
+        for(Stmt s:expr.stmts){
+            s.accept(this);
+        }
+        environment = previous;
+        return null;
+    }
+
     /**
      * Only false & null values are false, everything else is true
      * @param res

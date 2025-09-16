@@ -57,7 +57,18 @@ public class Parser {
      */
     private Stmt statement(){
         if(match(PRINT)) return printStatement();
+        if(match(LEFT_BRACE)) return blockStatement();
         return expressionStatement();
+    }
+
+    private BlockStmt blockStatement() {
+        List<Stmt> statements = new ArrayList<>();
+        while(!isAtEnd() && !check(RIGHT_BRACE)){
+            statements.add(declare());
+        }
+
+        consume(RIGHT_BRACE,"Expect '}' after block.");
+        return new BlockStmt(statements);
     }
 
     private PrintStmt printStatement(){
