@@ -28,6 +28,11 @@ public class RpnPrinter implements Visitor<String>{
     }
 
     @Override
+    public String visitAssignExpr(AssignExpr expr) {
+        return "";
+    }
+
+    @Override
     public String visitPrintStmt(PrintStmt expr) {
         return "";
     }

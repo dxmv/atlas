@@ -82,6 +82,12 @@ public class Interpreter implements Visitor<Object> {
     }
 
     @Override
+    public Object visitAssignExpr(AssignExpr expr) {
+        Object res = expr.value.accept(this);
+        return environment.assign(expr.name,res);
+    }
+
+    @Override
     public Object visitPrintStmt(PrintStmt expr) {
         Object value = expr.expression.accept(this);
         System.out.println(stringify(value));

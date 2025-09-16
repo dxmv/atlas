@@ -1,2 +1,4 @@
-var test = 3 == 2;
-print test;
+var a = 10;
+var b = 1;
+a = b;
+print a;

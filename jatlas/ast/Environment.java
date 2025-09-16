@@ -21,4 +21,12 @@ public class Environment {
         }
         return state.get(name);
     }
+
+    public Object assign(String name,Object value) {
+        if(!state.containsKey(name)){
+            throw new RuntimeError(null,"Cannot assign to undefined value.");
+        }
+        state.put(name,value);
+        return state.get(name);
+    }
 }

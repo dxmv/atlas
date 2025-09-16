@@ -38,7 +38,12 @@
 - [x] Implement print statements
 - [x] Implement declaration statements
 - [x] Implement global state
-- [ ] Implement assigment statemnts
+- [x] Implement assigment statemnts
+- [ ] Implement block scope
+- [ ] REPL no longer supports entering a single expression and printing it's result value, fix it
+- [ ] Make it a runtime error to acess a varaible that has not been initiliazed
+
+### Phase 7 - Control Flow
 
 
 

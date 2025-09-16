@@ -79,7 +79,22 @@ public class Parser {
      * @return
      */
     private Expr expression(){
-        return equality();
+        return assignment();
+    }
+
+    private Expr assignment(){
+        Expr expr = equality();
+
+        if(match(EQUAL)){
+            Token equal = previous();
+            Expr right = assignment();
+            if(expr instanceof VariableExpr ve){
+                String name = ve.identifier;
+                return new AssignExpr(name,right);
+            }
+            error(equal,"Invalid assignment target.");
+        }
+        return expr;
     }
 
     private boolean match(TokenType... types) {
