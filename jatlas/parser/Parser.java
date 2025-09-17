@@ -6,6 +6,7 @@ import tokenizer.Token;
 import tokenizer.TokenType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static tokenizer.TokenType.*;
@@ -60,12 +61,13 @@ public class Parser {
         if(match(LEFT_BRACE)) return blockStatement();
         if(match(IF)) return ifStatement();
         if(match(WHILE)) return whileStatement();
+        if(match(FOR)) return forStatement();
         return expressionStatement();
     }
 
     private WhileStmt whileStatement() {
         // consume '('
-        consume(LEFT_PAREN,"Expected \"(\" after if.");
+        consume(LEFT_PAREN,"Expected \"(\" after while.");
         // get the condition
         Expr condition = expression();
         // consume '('
@@ -74,6 +76,47 @@ public class Parser {
         // get the body
         Stmt body = statement();
         return new WhileStmt(condition, body);
+    }
+
+    private Stmt forStatement() {
+        // consume '('
+        consume(LEFT_PAREN,"Expected \"(\" after for.");
+        // try to get the initializer
+        Stmt initializer = null;
+        if(match(SEMICOLON)) {
+            // no init
+            initializer = null;
+        } else if(match(VAR)){
+            initializer = declareStmt();
+        } else{
+            initializer = expressionStatement();
+        }
+
+        // get the condition
+        Expr condition = null;
+        if(!check(SEMICOLON)) condition = expression();
+        consume(SEMICOLON, "Expect ';' after loop condition.");
+
+        // get the increment
+        Expr increment = null;
+        if(!check(RIGHT_PAREN)) increment = expression();
+        consume(RIGHT_PAREN, "Expect ')' after for clauses.");
+
+        Stmt body = statement();
+        // add increment to end of body
+        if(increment != null) {
+            body = new BlockStmt(Arrays.asList(body,new ExpressionStmt(increment)));
+        }
+        // if no condition, then always true
+        if(condition == null) {
+            condition = new LiteralExpr(true);
+        }
+        body = new WhileStmt(condition, body);
+        // add the initializer to start of body
+        if(initializer != null) {
+            body = new BlockStmt(Arrays.asList(initializer,body));
+        }
+        return body;
     }
 
     private IfStmt ifStatement() {

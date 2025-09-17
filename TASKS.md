@@ -47,7 +47,7 @@
 - [x] If statments
 - [x] add 'and' and 'or' operatiors
 - [x] While loop
-- [ ] For loop
+- [x] For loop
 
 # 18.09.2025
 - [ ] Use tokens instead of strings in parser

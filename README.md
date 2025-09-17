@@ -47,7 +47,7 @@
 - [x] If statments
 - [x] add 'and' and 'or' operatiors
 - [x] While loop
-- [ ] For loop
+- [x] For loop
 - [ ] 'break' in loops
 
 
