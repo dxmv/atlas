@@ -42,7 +42,14 @@
 # 16.09.2025
 - [x] Implement assigment statemnts
 - [x] Implement block scope
-- [ ] REPL no longer supports entering a single expression and printing it's result value, fix it
-- [ ] Make it a runtime error to acess a varaible that has not been initiliazed
+
+# 17.09.2025
+- [ ] If statments
+- [ ] add 'and' and 'or' operatiors
+- [ ] While loop
+- [ ] For loop
+
+# 18.09.2025
+- [ ] Use tokens instead of strings in parser
 
 

@@ -117,6 +117,21 @@ public class Interpreter implements Visitor<Object> {
         return null;
     }
 
+    @Override
+    public Object visitIfStmt(IfStmt expr) {
+        // process the condition
+        boolean res = isTruthy(expr.condition.accept(this));
+        if(res){
+            return expr.thenBranch.accept(this);
+        }
+        else{
+            if(expr.elseBranch != null){
+                return expr.elseBranch.accept(this);
+            }
+        }
+        return null;
+    }
+
     /**
      * Only false & null values are false, everything else is true
      * @param res

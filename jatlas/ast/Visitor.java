@@ -15,5 +15,6 @@ public interface Visitor<R>{
 	R visitExpressionStmt(ExpressionStmt expr);
 	R visitDeclareStmt(DeclareStmt expr);
 	R visitBlockStmt(BlockStmt expr);
+	R visitIfStmt(IfStmt expr);
 
 }

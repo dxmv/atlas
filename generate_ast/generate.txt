@@ -8,3 +8,4 @@ Print: Expr expression ; Stmt
 Expression: Expr expression ; Stmt
 Declare: Expr expression, String name ; Stmt
 Block: List<Stmt> stmts; Stmt 
+If: Expr condition, Stmt thenBranch, Stmt elseBranch; Stmt

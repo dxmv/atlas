@@ -44,6 +44,11 @@
 - [ ] Make it a runtime error to acess a varaible that has not been initiliazed
 
 ### Phase 7 - Control Flow
+- [ ] If statments
+- [ ] add 'and' and 'or' operatiors
+- [ ] While loop
+- [ ] For loop
+- [ ] 'break' in loops
 
 
 

@@ -58,7 +58,25 @@ public class Parser {
     private Stmt statement(){
         if(match(PRINT)) return printStatement();
         if(match(LEFT_BRACE)) return blockStatement();
+        if(match(IF)) return ifStatement();
         return expressionStatement();
+    }
+
+    private IfStmt ifStatement() {
+        // consume '('
+        consume(LEFT_PAREN,"Expected \"(\" after if.");
+        // get the condition
+        Expr condition = expression();
+        // consume '('
+        consume(RIGHT_PAREN,"Expected \")\" after condition.");
+
+        // get the thenBranch
+        Stmt thenBranch = statement();
+
+        Stmt elseBranch = null;
+        if(match(ELSE)) elseBranch = statement();
+
+        return new IfStmt(condition,thenBranch,elseBranch);
     }
 
     private BlockStmt blockStatement() {
