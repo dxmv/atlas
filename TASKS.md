@@ -44,8 +44,8 @@
 - [x] Implement block scope
 
 # 17.09.2025
-- [ ] If statments
-- [ ] add 'and' and 'or' operatiors
+- [x] If statments
+- [x] add 'and' and 'or' operatiors
 - [ ] While loop
 - [ ] For loop
 

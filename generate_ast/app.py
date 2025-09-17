@@ -8,7 +8,7 @@ def write_package_name(f):
         '''
         Writes package name as first line
         '''
-        f.write(f"package {PACKAGE_NAME}; \n\nimport tokenizer.Token;\n")
+        f.write(f"package {PACKAGE_NAME}; \n\nimport tokenizer.Token;\nimport java.util.List;\n")
 
 
 def generate_root(name:str):

@@ -4,14 +4,14 @@ import tokenizer.Token;
 import java.util.List;
 
 
-public class BinaryExpr extends Expr{
+public class LogicalExpr extends Expr{
 	public Expr left;
 	public Token operator;
 	public Expr right;
 
 
 
-	public BinaryExpr (Expr left, Token operator, Expr right){
+	public LogicalExpr (Expr left, Token operator, Expr right){
 		this.left = left;
 		this.operator = operator;
 		this.right = right;
@@ -20,6 +20,6 @@ public class BinaryExpr extends Expr{
 	@Override
 
 	<R> R accept(Visitor<R> visitor) {
-		return visitor.visitBinaryExpr(this);
+		return visitor.visitLogicalExpr(this);
 	}
 }

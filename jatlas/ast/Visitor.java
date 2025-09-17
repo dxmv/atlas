@@ -1,6 +1,7 @@
 package ast; 
 
 import tokenizer.Token;
+import java.util.List;
 
 
 public interface Visitor<R>{
@@ -16,5 +17,6 @@ public interface Visitor<R>{
 	R visitDeclareStmt(DeclareStmt expr);
 	R visitBlockStmt(BlockStmt expr);
 	R visitIfStmt(IfStmt expr);
+	R visitLogicalExpr(LogicalExpr expr);
 
 }

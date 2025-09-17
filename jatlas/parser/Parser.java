@@ -112,7 +112,7 @@ public class Parser {
     }
 
     private Expr assignment(){
-        Expr expr = equality();
+        Expr expr = or();
 
         if(match(EQUAL)){
             Token equal = previous();
@@ -122,6 +122,28 @@ public class Parser {
                 return new AssignExpr(name,right);
             }
             error(equal,"Invalid assignment target.");
+        }
+        return expr;
+    }
+
+    private Expr or(){
+        Expr expr = and();
+
+        while (match(OR)){
+            Token operator = previous();
+            Expr expr1 = and();
+            expr = new LogicalExpr(expr, operator, expr1);
+        }
+        return expr;
+    }
+
+    private Expr and(){
+        Expr expr = equality();
+
+        while (match(AND)){
+            Token operator = previous();
+            Expr expr1 = equality();
+            expr = new LogicalExpr(expr, operator, expr1);
         }
         return expr;
     }

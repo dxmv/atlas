@@ -2,6 +2,7 @@ package ast;
 
 import error.RuntimeError;
 import tokenizer.Token;
+import tokenizer.TokenType;
 
 import java.util.List;
 
@@ -130,6 +131,23 @@ public class Interpreter implements Visitor<Object> {
             }
         }
         return null;
+    }
+
+    @Override
+    public Object visitLogicalExpr(LogicalExpr expr) {
+        Object left = expr.left.accept(this);
+        boolean leftBool = isTruthy(left);
+        if(expr.operator.getType() == TokenType.AND){
+            if(!leftBool){
+                return left;
+            }
+        }
+        else{
+            if(leftBool){
+                return left;
+            }
+        }
+        return expr.right.accept(this);
     }
 
     /**
