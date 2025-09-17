@@ -46,7 +46,7 @@
 # 17.09.2025
 - [x] If statments
 - [x] add 'and' and 'or' operatiors
-- [ ] While loop
+- [x] While loop
 - [ ] For loop
 
 # 18.09.2025

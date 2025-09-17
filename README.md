@@ -46,7 +46,7 @@
 ### Phase 7 - Control Flow
 - [x] If statments
 - [x] add 'and' and 'or' operatiors
-- [ ] While loop
+- [x] While loop
 - [ ] For loop
 - [ ] 'break' in loops
 

@@ -150,6 +150,14 @@ public class Interpreter implements Visitor<Object> {
         return expr.right.accept(this);
     }
 
+    @Override
+    public Object visitWhileStmt(WhileStmt expr) {
+        while(isTruthy(expr.condition.accept(this))){
+            expr.body.accept(this);
+        }
+        return null;
+    }
+
     /**
      * Only false & null values are false, everything else is true
      * @param res
