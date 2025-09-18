@@ -1,16 +1,15 @@
 package ast; 
 
 import tokenizer.Token;
-import java.util.List;
 
 
 public class DeclareStmt extends Stmt{
 	public Expr expression;
-	public String name;
+	public Token name;
 
 
 
-	public DeclareStmt (Expr expression, String name){
+	public DeclareStmt (Expr expression, Token name){
 		this.expression = expression;
 		this.name = name;
 	}

@@ -1,15 +1,14 @@
 package ast; 
 
 import tokenizer.Token;
-import java.util.List;
 
 
 public class VariableExpr extends Expr{
-	public String identifier;
+	public Token identifier;
 
 
 
-	public VariableExpr (String identifier){
+	public VariableExpr (Token identifier){
 		this.identifier = identifier;
 	}
 

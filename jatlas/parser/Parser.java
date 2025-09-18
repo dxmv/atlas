@@ -49,7 +49,7 @@ public class Parser {
             expr = new LiteralExpr("null");
         }
         consume(SEMICOLON,"Expect ';'.");
-        return new DeclareStmt(expr, id.getLiteral());
+        return new DeclareStmt(expr, id);
     }
 
     /**
@@ -175,7 +175,7 @@ public class Parser {
             Token equal = previous();
             Expr right = assignment();
             if(expr instanceof VariableExpr ve){
-                String name = ve.identifier;
+                Token name = ve.identifier;
                 return new AssignExpr(name,right);
             }
             error(equal,"Invalid assignment target.");
@@ -227,7 +227,7 @@ public class Parser {
         if(match(FALSE)) { return new LiteralExpr(false); }
         if(match(NIL)) { return new LiteralExpr(null); }
         if(match(NUMBER,STRING)) { return new LiteralExpr(previous().getValue()); }
-        if(match(IDENTIFIER)) { return new VariableExpr(previous().getLiteral()); }
+        if(match(IDENTIFIER)) { return new VariableExpr(previous()); }
         if(match(LEFT_PAREN)){
             Expr expr = expression();
             consume(RIGHT_PAREN, "Expect ')' after expression.");
@@ -237,13 +237,42 @@ public class Parser {
         throw error(peek(), "Expect expression.");
     }
 
+    private Expr call(){
+        // get callee
+        Expr expr = primary();
+        // read arguments
+        while(true){
+            if(match(LEFT_PAREN)){
+                expr = finishCall(expr);
+            }
+            else{
+                break;
+            }
+        }
+        return expr;
+    }
+
+    private Expr finishCall(Expr callee){
+        List<Expr> args = new ArrayList<>();
+        // check if there are any arguments and read them
+        if(!check(RIGHT_PAREN)){
+            do{
+                if (args.size() >= 255) {
+                    error(peek(), "Can't have more than 255 arguments.");
+                }
+                args.add(expression());
+            } while (match(COMMA));
+        }
+        return new CallExpr(callee,consume(RIGHT_PAREN,"Expect ')' after call."),args);
+    }
+
     private Expr unary(){
         if(match(BANG,MINUS)){
             Token operator = previous();
             Expr expr = unary();
             return new UnaryExpr(operator, expr);
         }
-        return primary();
+        return call();
     }
 
     private Expr factor(){

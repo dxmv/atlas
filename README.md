@@ -50,5 +50,12 @@
 - [x] For loop
 - [ ] 'break' in loops
 
+### Phase 8 - Functions
+- [ ] Parse and interpret function calls
+- [ ] Global clock function
+- [ ] Function declarations
+- [ ] Return statements
+- [ ] Local functions and clousers
+
 
 

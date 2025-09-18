@@ -2,12 +2,13 @@ Binary: Expr left, Token operator, Expr right ; Expr
 Grouping: Expr expression ; Expr
 Literal: Object value ; Expr
 Unary: Token operator, Expr right ; Expr
-Variable: String identifier ; Expr
-Assign: String name, Expr value ; Expr
+Variable: Token identifier ; Expr
+Assign: Token name, Expr value ; Expr
 Print: Expr expression ; Stmt
 Expression: Expr expression ; Stmt
-Declare: Expr expression, String name ; Stmt
+Declare: Expr expression, Token name ; Stmt
 Block: List<Stmt> stmts; Stmt 
 If: Expr condition, Stmt thenBranch, Stmt elseBranch; Stmt
 Logical: Expr left, Token operator, Expr right; Expr
 While: Expr condition, Stmt body; Stmt
+Call: Expr callee, Token paren, List<Expr> arguments;Expr

@@ -67,6 +67,11 @@ public class RpnPrinter implements Visitor<String>{
         return "";
     }
 
+    @Override
+    public String visitCallExpr(CallExpr expr) {
+        return "";
+    }
+
     public String print(Expr expression) {
         return expression.accept(this);
     }

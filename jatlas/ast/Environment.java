@@ -1,6 +1,7 @@
 package ast;
 
 import error.RuntimeError;
+import tokenizer.Token;
 
 import java.util.HashMap;
 
@@ -21,24 +22,24 @@ public class Environment {
         state.put(name,value);
     }
 
-    public Object get(String name) {
-        if(!state.containsKey(name)){
+    public Object get(Token name) {
+        if(!state.containsKey(name.getLiteral())){
             if(parent != null){
                 return parent.get(name);
             }
-            throw new RuntimeError(null,"The item doesn't exist.");
+            throw new RuntimeError(name,"The item doesn't exist.");
         }
-        return state.get(name);
+        return state.get(name.getLiteral());
     }
 
-    public Object assign(String name,Object value) {
-        if(!state.containsKey(name)){
+    public Object assign(Token name,Object value) {
+        if(!state.containsKey(name.getLiteral())){
             if(parent != null){
                 return parent.assign(name,value);
             }
-            throw new RuntimeError(null,"Cannot assign to undefined value.");
+            throw new RuntimeError(name,"Cannot assign to undefined value.");
         }
-        state.put(name,value);
-        return state.get(name);
+        state.put(name.getLiteral(),value);
+        return state.get(name.getLiteral());
     }
 }

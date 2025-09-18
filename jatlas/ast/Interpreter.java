@@ -1,9 +1,11 @@
 package ast;
 
+import callable.AtlasCallable;
 import error.RuntimeError;
 import tokenizer.Token;
 import tokenizer.TokenType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Interpreter implements Visitor<Object> {
@@ -102,7 +104,7 @@ public class Interpreter implements Visitor<Object> {
 
     @Override
     public Object visitDeclareStmt(DeclareStmt expr) {
-        String id = expr.name;
+        String id = expr.name.getLiteral();
         environment.put(id, expr.expression.accept(this));
         return null;
     }
@@ -156,6 +158,21 @@ public class Interpreter implements Visitor<Object> {
             expr.body.accept(this);
         }
         return null;
+    }
+
+    @Override
+    public Object visitCallExpr(CallExpr expr) {
+        Object callee = expr.callee.accept(this);
+
+        List<Object> args = new ArrayList<>();
+        for(Expr arg : expr.arguments){
+            args.add(arg.accept(this));
+        }
+        AtlasCallable callable = (AtlasCallable) callee;
+        if(args.size() != callable.arity()){
+            throw new RuntimeError(expr.paren,"The number of arguments doesn't match.");
+        }
+        return callable.call(this,args);
     }
 
     /**

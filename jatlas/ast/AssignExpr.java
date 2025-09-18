@@ -1,16 +1,15 @@
 package ast; 
 
 import tokenizer.Token;
-import java.util.List;
 
 
 public class AssignExpr extends Expr{
-	public String name;
+	public Token name;
 	public Expr value;
 
 
 
-	public AssignExpr (String name, Expr value){
+	public AssignExpr (Token name, Expr value){
 		this.name = name;
 		this.value = value;
 	}

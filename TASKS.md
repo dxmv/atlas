@@ -50,6 +50,13 @@
 - [x] For loop
 
 # 18.09.2025
+- [x] Parse and interpret function calls
+- [x] Global clock function
+- [x] Function declarations
+- [x] Return statements
+- [x] Local functions and clousers
+
+# 19.09.2025
 - [ ] Use tokens instead of strings in parser
 
 
