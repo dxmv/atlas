@@ -2,6 +2,7 @@ package ast;
 
 import callable.AtlasCallable;
 import callable.AtlasFunction;
+import error.Return;
 import error.RuntimeError;
 import tokenizer.Token;
 import tokenizer.TokenType;
@@ -214,6 +215,13 @@ public class Interpreter implements Visitor<Object> {
         AtlasCallable func = new AtlasFunction(expr);
         environment.put(expr.name.getLiteral(), func);
         return null;
+    }
+
+    @Override
+    public Object visitRetrunStmt(RetrunStmt expr) {
+        Object val = null;
+        if(expr.value != null) val = expr.value.accept(this);
+        throw new Return(val);
     }
 
     /**

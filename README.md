@@ -54,7 +54,7 @@
 - [x] Parse and interpret function calls
 - [x] Global clock function
 - [x] Function declarations
-- [ ] Return statements
+- [x] Return statements
 - [ ] Local functions 
 - [ ] Clousers
 

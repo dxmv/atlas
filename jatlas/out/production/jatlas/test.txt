@@ -1,5 +1,6 @@
 fun add(first, last) {
-  print first + last;
+  return first + last;
 }
 
-add(2,3);
+var res = add(2,3);
+print res;

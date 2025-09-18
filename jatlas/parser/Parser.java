@@ -86,7 +86,19 @@ public class Parser {
         if(match(IF)) return ifStatement();
         if(match(WHILE)) return whileStatement();
         if(match(FOR)) return forStatement();
+        if(match(RETURN)) return returnStatement();
         return expressionStatement();
+    }
+
+    private Stmt returnStatement(){
+        Token prev = previous(); // get the return token we consumed
+        // get the return value if it exists
+        Expr expr = null;
+        if(!check(SEMICOLON)){
+            expr = expression();
+        }
+        consume(SEMICOLON,"Expect ';'.");
+        return new RetrunStmt(prev,expr);
     }
 
     private WhileStmt whileStatement() {

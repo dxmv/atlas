@@ -4,6 +4,7 @@ import ast.Environment;
 import ast.FunctionStmt;
 import ast.Interpreter;
 import ast.Stmt;
+import error.Return;
 
 import java.util.List;
 
@@ -28,7 +29,11 @@ public class AtlasFunction implements AtlasCallable{
             env.put(name,arg);
         }
         // execute block
-        interpreter.executeBlock(env,declaration.stmts);
+        try {
+            interpreter.executeBlock(env, declaration.stmts);
+        } catch (Return r){
+            return r.getValue();
+        }
         return null;
     }
 

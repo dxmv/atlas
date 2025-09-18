@@ -13,3 +13,4 @@ Logical: Expr left, Token operator, Expr right; Expr
 While: Expr condition, Stmt body; Stmt
 Call: Expr callee, Token paren, List<Expr> arguments;Expr
 Function: Token name,List<Token> params,List<Stmt> stmts; Stmt
+Retrun: Token keyword, Expr value;Stmt
