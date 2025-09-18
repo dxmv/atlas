@@ -10,8 +10,10 @@ import java.util.List;
 
 public class AtlasFunction implements AtlasCallable{
     private final FunctionStmt declaration;
-    public AtlasFunction(FunctionStmt declaration){
+    private final Environment closure;
+    public AtlasFunction(FunctionStmt declaration,Environment closure){
         this.declaration = declaration;
+        this.closure = closure;
     }
 
     @Override
@@ -21,7 +23,7 @@ public class AtlasFunction implements AtlasCallable{
 
     @Override
     public Object call(Interpreter interpreter, List<Object> arguments) {
-        Environment env = new Environment(interpreter.globals);
+        Environment env = new Environment(this.closure);
         // bind the params and arguments
         for(int i = 0; i<arguments.size(); i++){
             Object arg = arguments.get(i);

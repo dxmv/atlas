@@ -55,8 +55,7 @@
 - [x] Global clock function
 - [x] Function declarations
 - [x] Return statements
-- [ ] Local functions 
-- [ ] Clousers
+- [x] Local Functions and Closures
 
 
 

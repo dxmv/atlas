@@ -1,6 +1,13 @@
-fun add(first, last) {
-  return first + last;
+fun makeCounter() {
+  var i = 0;
+  fun count() {
+    i = i + 1;
+    print i;
+  }
+
+  return count;
 }
 
-var res = add(2,3);
-print res;
+var counter = makeCounter();
+counter(); // "1".
+counter(); // "2".

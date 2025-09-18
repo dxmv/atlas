@@ -212,7 +212,8 @@ public class Interpreter implements Visitor<Object> {
 
     @Override
     public Object visitFunctionStmt(FunctionStmt expr) {
-        AtlasCallable func = new AtlasFunction(expr);
+        Environment previous = this.environment;
+        AtlasCallable func = new AtlasFunction(expr,previous);
         environment.put(expr.name.getLiteral(), func);
         return null;
     }
