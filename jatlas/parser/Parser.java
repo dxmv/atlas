@@ -36,7 +36,31 @@ public class Parser {
      */
     private Stmt declare() {
         if(match(VAR)) return declareStmt();
+        if(match(FUNC)) return funcStmt("function");
         return statement();
+    }
+
+    private Stmt funcStmt(String kind) {
+        Token name = consume(IDENTIFIER,"Expect " + kind + " name.");
+        // parse params
+        consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
+        List<Token> parameters = new ArrayList<>();
+        if (!check(RIGHT_PAREN)) {
+            do {
+                if (parameters.size() >= 255) {
+                    error(peek(), "Can't have more than 255 parameters.");
+                }
+
+                parameters.add(
+                        consume(IDENTIFIER, "Expect parameter name."));
+            } while (match(COMMA));
+        }
+        consume(RIGHT_PAREN, "Expect ')' after parameters.");
+
+        // parse block
+        consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
+        BlockStmt body = (BlockStmt) blockStatement();
+        return new FunctionStmt(name, parameters, body.stmts);
     }
 
     private DeclareStmt declareStmt() {
@@ -136,7 +160,7 @@ public class Parser {
         return new IfStmt(condition,thenBranch,elseBranch);
     }
 
-    private BlockStmt blockStatement() {
+    private Stmt blockStatement() {
         List<Stmt> statements = new ArrayList<>();
         while(!isAtEnd() && !check(RIGHT_BRACE)){
             statements.add(declare());

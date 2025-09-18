@@ -1,6 +1,7 @@
 package ast;
 
 import callable.AtlasCallable;
+import callable.AtlasFunction;
 import error.RuntimeError;
 import tokenizer.Token;
 import tokenizer.TokenType;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Interpreter implements Visitor<Object> {
-    private Environment globals = new Environment();
+    public Environment globals = new Environment();
     private Environment environment = globals;
 
     public Interpreter() {
@@ -132,13 +133,20 @@ public class Interpreter implements Visitor<Object> {
 
     @Override
     public Object visitBlockStmt(BlockStmt expr) {
-        Environment previous = environment;
-        environment = new Environment(environment);
-        for(Stmt s:expr.stmts){
-            s.accept(this);
-        }
-        environment = previous;
+        executeBlock(new Environment(environment), expr.stmts);
         return null;
+    }
+
+    public void executeBlock(Environment env,List<Stmt> stmts) {
+        Environment previous = this.environment;
+        try {
+            this.environment = env;
+            for (Stmt s : stmts) {
+                s.accept(this);
+            }
+        } finally {
+            this.environment = previous;
+        }
     }
 
     @Override
@@ -199,6 +207,13 @@ public class Interpreter implements Visitor<Object> {
                     args.size() + ".");
         }
         return function.call(this,args);
+    }
+
+    @Override
+    public Object visitFunctionStmt(FunctionStmt expr) {
+        AtlasCallable func = new AtlasFunction(expr);
+        environment.put(expr.name.getLiteral(), func);
+        return null;
     }
 
     /**

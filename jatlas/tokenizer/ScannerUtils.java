@@ -16,7 +16,7 @@ public  class ScannerUtils {
         KEYWORDS.put("return", TokenType.RETURN);
         KEYWORDS.put("false", TokenType.FALSE);
         KEYWORDS.put("true", TokenType.TRUE);
-        KEYWORDS.put("func", TokenType.FUNC);
+        KEYWORDS.put("fun", TokenType.FUNC);
         KEYWORDS.put("var", TokenType.VAR);
         KEYWORDS.put("nil", TokenType.NIL);
         KEYWORDS.put("this", TokenType.THIS);

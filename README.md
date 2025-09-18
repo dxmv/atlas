@@ -53,7 +53,7 @@
 ### Phase 8 - Functions
 - [x] Parse and interpret function calls
 - [x] Global clock function
-- [ ] Function declarations
+- [x] Function declarations
 - [ ] Return statements
 - [ ] Local functions 
 - [ ] Clousers

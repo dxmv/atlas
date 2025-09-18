@@ -1,1 +1,5 @@
-var c = clock();
+fun add(first, last) {
+  print first + last;
+}
+
+add(2,3);
