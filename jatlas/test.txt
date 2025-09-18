@@ -1,1 +1,1 @@
-test() ;
+var c = clock();

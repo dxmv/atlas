@@ -9,7 +9,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Interpreter implements Visitor<Object> {
-    private Environment environment = new Environment();
+    private Environment globals = new Environment();
+    private Environment environment = globals;
+
+    public Interpreter() {
+        // define clock function
+        globals.put("clock",new AtlasCallable(){
+            @Override
+            public int arity() {
+                return 0;
+            }
+
+            @Override
+            public Object call(Interpreter interpreter, List<Object> arguments) {
+                return (double) System.currentTimeMillis() / 1000;
+            }
+
+            @Override
+            public String toString() {
+                return "<native fn>";
+            }
+        });
+    }
 
     @Override
     public Object visitBinaryExpr(BinaryExpr expr) {
@@ -168,11 +189,16 @@ public class Interpreter implements Visitor<Object> {
         for(Expr arg : expr.arguments){
             args.add(arg.accept(this));
         }
-        AtlasCallable callable = (AtlasCallable) callee;
-        if(args.size() != callable.arity()){
-            throw new RuntimeError(expr.paren,"The number of arguments doesn't match.");
+        if (!(callee instanceof AtlasCallable function)) {
+            throw new RuntimeError(expr.paren,
+                    "Can only call functions and classes.");
         }
-        return callable.call(this,args);
+        if(args.size() != function.arity()){
+            throw new RuntimeError(expr.paren, "Expected " +
+                    function.arity() + " arguments but got " +
+                    args.size() + ".");
+        }
+        return function.call(this,args);
     }
 
     /**
