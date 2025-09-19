@@ -57,5 +57,10 @@
 - [x] Return statements
 - [x] Local Functions and Closures
 
+### Phase 9 - Resolving and Binding
+- [ ] Resolver class
+- [ ] Interpreting resolved variables
+- [ ] Resolution errors
+
 
 
