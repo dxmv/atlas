@@ -2,17 +2,21 @@ package ast;
 
 import callable.AtlasCallable;
 import callable.AtlasFunction;
+import error.ErrorReporter;
 import error.Return;
 import error.RuntimeError;
 import tokenizer.Token;
 import tokenizer.TokenType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Interpreter implements Visitor<Object> {
     public Environment globals = new Environment();
     private Environment environment = globals;
+    private Map<Expr,Integer> locals = new HashMap<>();
 
     public Interpreter() {
         // define clock function
@@ -104,13 +108,28 @@ public class Interpreter implements Visitor<Object> {
 
     @Override
     public Object visitVariableExpr(VariableExpr expr) {
-        return environment.get(expr.identifier);
+        return lookUpVariable(expr);
+    }
+
+    private Object lookUpVariable(VariableExpr expr) {
+        Integer distance = locals.get(expr);
+        if (distance == null) {
+            return globals.get(expr.identifier);
+        }
+        return environment.getAt(distance,expr.identifier);
     }
 
     @Override
     public Object visitAssignExpr(AssignExpr expr) {
         Object res = expr.value.accept(this);
-        return environment.assign(expr.name,res);
+        Integer dist = locals.get(expr);
+        if (dist == null) {
+            globals.assign(expr.name,res);
+        }
+        else{
+            environment.assignAt(dist,expr.name,res);
+        }
+        return res;
     }
 
     @Override
@@ -127,8 +146,11 @@ public class Interpreter implements Visitor<Object> {
 
     @Override
     public Object visitDeclareStmt(DeclareStmt expr) {
-        String id = expr.name.getLiteral();
-        environment.put(id, expr.expression.accept(this));
+        Object value = null;
+        if (expr.expression != null) {
+            value = expr.expression.accept(this);
+        }
+        environment.put(expr.name.getLiteral(), value);
         return null;
     }
 
@@ -306,5 +328,6 @@ public class Interpreter implements Visitor<Object> {
     }
 
     public void resolve(int depth, Expr expr) {
+        locals.put(expr,depth);
     }
 }

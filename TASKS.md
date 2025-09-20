@@ -61,7 +61,7 @@
 
 # 20.09.2025
 - [x] Resolver class
-- [ ] Interpreting resolved variables
+- [x] Interpreting resolved variables
 - [ ] Resolution errors
 
 

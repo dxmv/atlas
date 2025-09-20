@@ -59,7 +59,7 @@
 
 ### Phase 9 - Resolving and Binding
 - [x] Resolver class
-- [ ] Interpreting resolved variables
+- [x] Interpreting resolved variables
 - [ ] Resolution errors
 
 

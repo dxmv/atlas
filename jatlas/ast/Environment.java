@@ -24,9 +24,6 @@ public class Environment {
 
     public Object get(Token name) {
         if(!state.containsKey(name.getLiteral())){
-            if(parent != null){
-                return parent.get(name);
-            }
             throw new RuntimeError(name,"The item doesn't exist.");
         }
         return state.get(name.getLiteral());
@@ -34,12 +31,25 @@ public class Environment {
 
     public Object assign(Token name,Object value) {
         if(!state.containsKey(name.getLiteral())){
-            if(parent != null){
-                return parent.assign(name,value);
-            }
             throw new RuntimeError(name,"Cannot assign to undefined value.");
         }
         state.put(name.getLiteral(),value);
         return state.get(name.getLiteral());
+    }
+
+    public Object getAt(int dist,Token name){
+        return ancestor(dist).get(name);
+    }
+
+    private Environment ancestor(int dist){
+        Environment env = this;
+        for(int i=0;i<dist;i++){
+            env = env.parent;
+        }
+        return env;
+    }
+
+    public Object assignAt(int dist,Token name,Object value) {
+        return ancestor(dist).assign(name,value);
     }
 }

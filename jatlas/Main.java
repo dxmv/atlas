@@ -35,6 +35,11 @@ public class Main {
             Parser parser = new Parser(tokens);
             List<Stmt> stmts = parser.parse();
             Interpreter interpreter = new Interpreter();
+
+            // resolve first
+            Resolver resolver = new Resolver(interpreter);
+            resolver.resolve(stmts);
+
             interpreter.interpret(stmts);
         }
         catch (RuntimeError err){

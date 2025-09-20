@@ -16,15 +16,15 @@ public class Resolver implements Visitor<Object>{
         interpreter = i;
     }
 
-    private void resolve(Stmt stmt){
+    public void resolve(Stmt stmt){
         stmt.accept(this);
     }
 
-    private void resolve(Expr expr){
+    public void resolve(Expr expr){
         expr.accept(this);
     }
 
-    private void resolve(List<Stmt> stmtList){
+    public void resolve(List<Stmt> stmtList){
         for(Stmt stmt : stmtList){
             resolve(stmt);
         }
@@ -75,6 +75,7 @@ public class Resolver implements Visitor<Object>{
         for(int i = scope.size() - 1; i >= 0; i--){
             if(scope.get(i).containsKey(identifier.getLiteral())){
                 interpreter.resolve(scope.size() - 1 - i,expr);
+                return;
             }
         }
     }
