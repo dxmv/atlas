@@ -66,4 +66,6 @@
 
 ### Phase 10 - Classes
 - [x] Class declarations
+- [x] Creating instances
+- [ ] Properties on instances
 
