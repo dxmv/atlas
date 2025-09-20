@@ -17,3 +17,4 @@ Retrun: Token keyword, Expr value;Stmt
 Class: Token name, List<FunctionStmt> functions;Stmt
 Get: Token name, Expr expr; Expr
 Set:Expr object,Token name,Expr val;Expr
+This: Token keyword;Expr
