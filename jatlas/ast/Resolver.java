@@ -204,4 +204,17 @@ public class Resolver implements Visitor<Object>{
         defineVar(expr.name);
         return null;
     }
+
+    @Override
+    public Object visitGetExpr(GetExpr expr) {
+        resolve(expr.expr);
+        return null;
+    }
+
+    @Override
+    public Object visitSetExpr(SetExpr expr) {
+        resolve(expr.object);
+        resolve(expr.val);
+        return null;
+    }
 }

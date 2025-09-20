@@ -226,6 +226,9 @@ public class Parser {
                 Token name = ve.identifier;
                 return new AssignExpr(name,right);
             }
+            if(expr instanceof GetExpr ge){
+                return new SetExpr(ge.expr,ge.name,right);
+            }
             error(equal,"Invalid assignment target.");
         }
         return expr;
@@ -292,6 +295,12 @@ public class Parser {
         while(true){
             if(match(LEFT_PAREN)){
                 expr = finishCall(expr);
+            }
+            // for get expressions
+            if(match(DOT)){
+                Token name = consume(IDENTIFIER,
+                        "Expect property name after '.'.");
+                expr = new GetExpr(name,expr);
             }
             else{
                 break;

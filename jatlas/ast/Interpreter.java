@@ -3,6 +3,7 @@ package ast;
 import callable.AtlasCallable;
 import callable.AtlasClass;
 import callable.AtlasFunction;
+import callable.AtlasInstance;
 import error.ErrorReporter;
 import error.Return;
 import error.RuntimeError;
@@ -254,6 +255,26 @@ public class Interpreter implements Visitor<Object> {
         AtlasClass klass = new AtlasClass(expr.name);
         environment.put(expr.name.getLiteral(),klass);
         return null;
+    }
+
+    @Override
+    public Object visitGetExpr(GetExpr expr) {
+        Object obj = expr.expr.accept(this);
+        if(!(obj instanceof AtlasInstance ai)){
+            throw new RuntimeError(expr.name,"Only instances have properties.");
+        }
+        return ai.get(expr.name);
+    }
+
+    @Override
+    public Object visitSetExpr(SetExpr expr) {
+        Object obj = expr.object.accept(this);
+        if(!(obj instanceof AtlasInstance ai)){
+            throw new RuntimeError(expr.name,"Only instances have properties.");
+        }
+        Object val = expr.val.accept(this);
+        ai.set(expr.name,val);
+        return val;
     }
 
     /**
