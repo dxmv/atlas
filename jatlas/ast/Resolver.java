@@ -1,5 +1,6 @@
 package ast;
 
+import callable.FunctionType;
 import error.ErrorReporter;
 import tokenizer.Token;
 
@@ -11,6 +12,7 @@ import java.util.Stack;
 public class Resolver implements Visitor<Object>{
     private Stack<Map<String,Boolean>> scope = new Stack<>();
     private final Interpreter interpreter;
+    private FunctionType currentFunction = FunctionType.NONE;
 
     public Resolver(Interpreter i){
         interpreter = i;
@@ -112,6 +114,9 @@ public class Resolver implements Visitor<Object>{
     private void declareVar(Token name){
         if(scope.isEmpty()) return;
         Map<String, Boolean> scp = scope.peek();
+        if(scp.containsKey(name.getLiteral())){
+            ErrorReporter.error(name,"Already a variable with this name in this scope.");
+        }
         scp.put(name.getLiteral(), false);
     }
 
@@ -165,11 +170,13 @@ public class Resolver implements Visitor<Object>{
         declareVar(expr.name);
         defineVar(expr.name);
 
-        resolveFunction(expr);
+        resolveFunction(expr,FunctionType.FUNCTION);
         return null;
     }
 
-    private void resolveFunction(FunctionStmt stmt){
+    private void resolveFunction(FunctionStmt stmt,FunctionType f){
+        FunctionType prevType = currentFunction;
+        currentFunction = f;
         declareScope();
         for (Token param : stmt.params) {
             declareVar(param);
@@ -177,10 +184,14 @@ public class Resolver implements Visitor<Object>{
         }
         resolve(stmt.stmts);
         endScope();
+        currentFunction = prevType;
     }
 
     @Override
     public Object visitRetrunStmt(RetrunStmt expr) {
+        if(currentFunction == FunctionType.NONE){
+            ErrorReporter.error(expr.keyword,"Can't return from top-level code.");
+        }
         if (expr.value != null) {
             resolve(expr.value);
         }
