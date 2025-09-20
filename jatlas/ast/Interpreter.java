@@ -304,4 +304,7 @@ public class Interpreter implements Visitor<Object> {
         }
         return res.toString();
     }
+
+    public void resolve(int depth, Expr expr) {
+    }
 }

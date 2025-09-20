@@ -1,5 +1,6 @@
 package ast;
 
+import error.ErrorReporter;
 import tokenizer.Token;
 
 import java.util.HashMap;
@@ -39,11 +40,14 @@ public class Resolver implements Visitor<Object>{
 
     @Override
     public Object visitBinaryExpr(BinaryExpr expr) {
+        resolve(expr.left);
+        resolve(expr.right);
         return null;
     }
 
     @Override
     public Object visitGroupingExpr(GroupingExpr expr) {
+        resolve(expr.expression);
         return null;
     }
 
@@ -54,26 +58,43 @@ public class Resolver implements Visitor<Object>{
 
     @Override
     public Object visitUnaryExpr(UnaryExpr expr) {
+        resolve(expr.right);
         return null;
     }
 
     @Override
     public Object visitVariableExpr(VariableExpr expr) {
+        if(!scope.isEmpty() && scope.peek().get(expr.identifier.getLiteral()) == Boolean.FALSE ){
+            ErrorReporter.error(expr.identifier,"Can't read local variable in its own initializer.");
+        }
+        resolveLocal(expr.identifier,expr);
         return null;
+    }
+
+    private void resolveLocal(Token identifier, Expr expr){
+        for(int i = scope.size() - 1; i >= 0; i--){
+            if(scope.get(i).containsKey(identifier.getLiteral())){
+                interpreter.resolve(scope.size() - 1 - i,expr);
+            }
+        }
     }
 
     @Override
     public Object visitAssignExpr(AssignExpr expr) {
+        resolve(expr.value);
+        resolveLocal(expr.name,expr);
         return null;
     }
 
     @Override
     public Object visitPrintStmt(PrintStmt expr) {
+        resolve(expr.expression);
         return null;
     }
 
     @Override
     public Object visitExpressionStmt(ExpressionStmt expr) {
+        resolve(expr.expression);
         return null;
     }
 
@@ -109,31 +130,59 @@ public class Resolver implements Visitor<Object>{
 
     @Override
     public Object visitIfStmt(IfStmt expr) {
+        resolve(expr.condition);
+        resolve(expr.thenBranch);
+        if(expr.elseBranch != null) resolve(expr.elseBranch);
         return null;
     }
 
     @Override
     public Object visitLogicalExpr(LogicalExpr expr) {
+        resolve(expr.left);
+        resolve(expr.right);
         return null;
     }
 
     @Override
     public Object visitWhileStmt(WhileStmt expr) {
+        resolve(expr.condition);
+        resolve(expr.body);
         return null;
     }
 
     @Override
     public Object visitCallExpr(CallExpr expr) {
+        resolve(expr.callee);
+        for(Expr e:expr.arguments){
+            resolve(e);
+        }
         return null;
     }
 
     @Override
     public Object visitFunctionStmt(FunctionStmt expr) {
+        declareVar(expr.name);
+        defineVar(expr.name);
+
+        resolveFunction(expr);
         return null;
+    }
+
+    private void resolveFunction(FunctionStmt stmt){
+        declareScope();
+        for (Token param : stmt.params) {
+            declareVar(param);
+            defineVar(param);
+        }
+        resolve(stmt.stmts);
+        endScope();
     }
 
     @Override
     public Object visitRetrunStmt(RetrunStmt expr) {
+        if (expr.value != null) {
+            resolve(expr.value);
+        }
         return null;
     }
 }
