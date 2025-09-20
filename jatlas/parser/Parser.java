@@ -35,12 +35,24 @@ public class Parser {
      * @return
      */
     private Stmt declare() {
+        if(match(CLASS)) return classStmt();
         if(match(VAR)) return declareStmt();
         if(match(FUNC)) return funcStmt("function");
         return statement();
     }
 
-    private Stmt funcStmt(String kind) {
+    private ClassStmt classStmt() {
+        Token name = consume(IDENTIFIER,"Expect class name.");
+        consume(LEFT_BRACE, "Expect '{' before class body.");
+        List<FunctionStmt> methods = new ArrayList<>();
+        while(!isAtEnd() && !check(RIGHT_BRACE)){
+            methods.add(funcStmt("method"));
+        }
+        consume(RIGHT_BRACE, "Expect '{' before class body.");
+        return new ClassStmt(name,methods);
+    }
+
+    private FunctionStmt funcStmt(String kind) {
         Token name = consume(IDENTIFIER,"Expect " + kind + " name.");
         // parse params
         consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");

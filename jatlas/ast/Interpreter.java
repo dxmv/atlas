@@ -1,6 +1,7 @@
 package ast;
 
 import callable.AtlasCallable;
+import callable.AtlasClass;
 import callable.AtlasFunction;
 import error.ErrorReporter;
 import error.Return;
@@ -245,6 +246,14 @@ public class Interpreter implements Visitor<Object> {
         Object val = null;
         if(expr.value != null) val = expr.value.accept(this);
         throw new Return(val);
+    }
+
+    @Override
+    public Object visitClassStmt(ClassStmt expr) {
+        environment.put(expr.name.getLiteral(),null);
+        AtlasClass klass = new AtlasClass(expr.name);
+        environment.put(expr.name.getLiteral(),klass);
+        return null;
     }
 
     /**

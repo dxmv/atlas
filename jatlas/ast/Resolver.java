@@ -197,4 +197,11 @@ public class Resolver implements Visitor<Object>{
         }
         return null;
     }
+
+    @Override
+    public Object visitClassStmt(ClassStmt expr) {
+        declareVar(expr.name);
+        defineVar(expr.name);
+        return null;
+    }
 }

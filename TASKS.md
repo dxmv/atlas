@@ -63,6 +63,7 @@
 - [x] Resolver class
 - [x] Interpreting resolved variables
 - [x] Resolution errors
+- [x] Class declarations
 
 
 

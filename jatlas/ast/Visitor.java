@@ -22,5 +22,6 @@ public interface Visitor<R>{
 	R visitCallExpr(CallExpr expr);
 	R visitFunctionStmt(FunctionStmt expr);
 	R visitRetrunStmt(RetrunStmt expr);
+	R visitClassStmt(ClassStmt expr);
 
 }
