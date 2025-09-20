@@ -22,12 +22,17 @@ public class AtlasClass implements AtlasCallable{
 
     @Override
     public int arity() {
-        return 0;
+        AtlasFunction func = getMethod("init");
+        return func == null ? 0 : func.arity();
     }
 
     @Override
     public Object call(Interpreter interpreter, List<Object> arguments) {
         AtlasInstance instance = new AtlasInstance(this);
+        AtlasFunction init = getMethod("init");
+        if(init != null){
+            init.bind(instance).call(interpreter, arguments);
+        }
         return instance;
     }
 

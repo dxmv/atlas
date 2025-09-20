@@ -254,7 +254,11 @@ public class Interpreter implements Visitor<Object> {
         environment.put(expr.name.getLiteral(),null);
         Map<String,AtlasCallable> methods = new HashMap<>();
         for(FunctionStmt stmt:expr.functions){
-            AtlasFunction func = new AtlasFunction(stmt,environment);
+            boolean isInit = false;
+            if(stmt.name.getLiteral().equals("init")){
+                isInit = true;
+            }
+            AtlasFunction func = new AtlasFunction(stmt,environment,isInit);
             methods.put(stmt.name.getLiteral(),func);
         }
         AtlasClass klass = new AtlasClass(expr.name,methods);

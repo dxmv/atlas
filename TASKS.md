@@ -64,6 +64,10 @@
 - [x] Interpreting resolved variables
 - [x] Resolution errors
 - [x] Class declarations
+- [x] Properties on instances
+- [x] Methods on classes
+- [x] This
+- [x] Constructors and initializers
 
 
 

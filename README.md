@@ -70,5 +70,9 @@
 - [x] Properties on instances
 - [x] Methods on classes
 - [x] This
-- [ ] Constructors and initializers
+- [x] Constructors and initializers
+- [ ] Implement static methods
+- [ ] Implement getters and setters
+
+
 

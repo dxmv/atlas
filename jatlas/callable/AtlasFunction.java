@@ -5,16 +5,27 @@ import ast.FunctionStmt;
 import ast.Interpreter;
 import ast.Stmt;
 import error.Return;
+import tokenizer.Token;
+import tokenizer.TokenType;
 
 import java.util.List;
 
 public class AtlasFunction implements AtlasCallable{
     private final FunctionStmt declaration;
     private final Environment closure;
+    private final boolean isInit;
     public AtlasFunction(FunctionStmt declaration,Environment closure){
         this.declaration = declaration;
         this.closure = closure;
+        this.isInit = false;
     }
+
+    public AtlasFunction(FunctionStmt declaration,Environment closure, boolean isInit){
+        this.declaration = declaration;
+        this.closure = closure;
+        this.isInit = isInit;
+    }
+
 
     @Override
     public int arity() {
@@ -34,7 +45,13 @@ public class AtlasFunction implements AtlasCallable{
         try {
             interpreter.executeBlock(env, declaration.stmts);
         } catch (Return r){
+            if(isInit){
+                return closure.get(new Token(TokenType.THIS,1,"this","this"));
+            }
             return r.getValue();
+        }
+        if(isInit){
+            return closure.get(new Token(TokenType.THIS,1,"this","this"));
         }
         return null;
     }
@@ -47,6 +64,6 @@ public class AtlasFunction implements AtlasCallable{
     public AtlasFunction bind(AtlasInstance atlasInstance) {
         Environment environment = new Environment(closure);
         environment.put("this", atlasInstance);
-        return new AtlasFunction(declaration, environment);
+        return new AtlasFunction(declaration, environment,isInit);
     }
 }

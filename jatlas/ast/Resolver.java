@@ -194,7 +194,11 @@ public class Resolver implements Visitor<Object>{
         if(currentFunction == FunctionType.NONE){
             ErrorReporter.error(expr.keyword,"Can't return from top-level code.");
         }
+
         if (expr.value != null) {
+            if(currentFunction == FunctionType.INITIALIZER){
+                ErrorReporter.error(expr.keyword,"Can't return a value from an initializer. ");
+            }
             resolve(expr.value);
         }
         return null;
@@ -206,12 +210,17 @@ public class Resolver implements Visitor<Object>{
         currentClass = ClassType.CLASS;
         declareVar(expr.name);
         declareScope();
+        endScope();
+
         scope.peek().put("this",true);
         for(FunctionStmt stmt:expr.functions){
-            resolveFunction(stmt,FunctionType.METHOD);
+            FunctionType declaration = FunctionType.METHOD;
+            if (stmt.name.getLiteral().equals("init")) {
+                declaration = FunctionType.INITIALIZER;
+            }
+            resolveFunction(stmt,declaration);
         }
         defineVar(expr.name);
-        endScope();
         currentClass = prevType;
         return null;
     }
@@ -231,7 +240,7 @@ public class Resolver implements Visitor<Object>{
 
     @Override
     public Object visitThisExpr(ThisExpr expr) {
-        if(currentFunction == FunctionType.NONE){
+        if(currentClass == ClassType.NONE){
             ErrorReporter.error(expr.keyword,"Can't use 'this' outside of a class.");
             return null;
         }
