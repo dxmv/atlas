@@ -69,4 +69,6 @@
 - [x] Creating instances
 - [x] Properties on instances
 - [x] Methods on classes
+- [x] This
+- [ ] Constructors and initializers
 

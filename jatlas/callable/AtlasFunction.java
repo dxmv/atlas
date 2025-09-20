@@ -43,4 +43,10 @@ public class AtlasFunction implements AtlasCallable{
     public String toString() {
         return "<fn " + declaration.name.getLiteral() + ">";
     }
+
+    public AtlasFunction bind(AtlasInstance atlasInstance) {
+        Environment environment = new Environment(closure);
+        environment.put("this", atlasInstance);
+        return new AtlasFunction(declaration, environment);
+    }
 }

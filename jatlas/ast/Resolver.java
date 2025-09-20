@@ -1,5 +1,6 @@
 package ast;
 
+import callable.ClassType;
 import callable.FunctionType;
 import error.ErrorReporter;
 import tokenizer.Token;
@@ -13,6 +14,7 @@ public class Resolver implements Visitor<Object>{
     private Stack<Map<String,Boolean>> scope = new Stack<>();
     private final Interpreter interpreter;
     private FunctionType currentFunction = FunctionType.NONE;
+    private ClassType currentClass = ClassType.NONE;
 
     public Resolver(Interpreter i){
         interpreter = i;
@@ -200,11 +202,17 @@ public class Resolver implements Visitor<Object>{
 
     @Override
     public Object visitClassStmt(ClassStmt expr) {
+        ClassType prevType = currentClass;
+        currentClass = ClassType.CLASS;
         declareVar(expr.name);
+        declareScope();
+        scope.peek().put("this",true);
         for(FunctionStmt stmt:expr.functions){
             resolveFunction(stmt,FunctionType.METHOD);
         }
         defineVar(expr.name);
+        endScope();
+        currentClass = prevType;
         return null;
     }
 
@@ -218,6 +226,16 @@ public class Resolver implements Visitor<Object>{
     public Object visitSetExpr(SetExpr expr) {
         resolve(expr.object);
         resolve(expr.val);
+        return null;
+    }
+
+    @Override
+    public Object visitThisExpr(ThisExpr expr) {
+        if(currentFunction == FunctionType.NONE){
+            ErrorReporter.error(expr.keyword,"Can't use 'this' outside of a class.");
+            return null;
+        }
+        resolveLocal(expr.keyword,expr);
         return null;
     }
 }

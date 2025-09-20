@@ -25,7 +25,7 @@ public class AtlasInstance {
         }
         AtlasFunction func = klass.getMethod(nameStr);
         if(func != null){
-            return func;
+            return func.bind(this);
         }
         throw new RuntimeError(name,"Undefined property '" + name.getLiteral() + "'.");
     }

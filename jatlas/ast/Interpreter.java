@@ -110,15 +110,15 @@ public class Interpreter implements Visitor<Object> {
 
     @Override
     public Object visitVariableExpr(VariableExpr expr) {
-        return lookUpVariable(expr);
+        return lookUpVariable(expr.identifier,expr);
     }
 
-    private Object lookUpVariable(VariableExpr expr) {
+    private Object lookUpVariable(Token name, Expr expr) {
         Integer distance = locals.get(expr);
         if (distance == null) {
-            return globals.get(expr.identifier);
+            return globals.get(name);
         }
-        return environment.getAt(distance,expr.identifier);
+        return environment.getAt(distance,name);
     }
 
     @Override
@@ -280,6 +280,11 @@ public class Interpreter implements Visitor<Object> {
         Object val = expr.val.accept(this);
         ai.set(expr.name,val);
         return val;
+    }
+
+    @Override
+    public Object visitThisExpr(ThisExpr expr) {
+        return lookUpVariable(expr.keyword,expr);
     }
 
     /**
