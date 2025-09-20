@@ -252,7 +252,12 @@ public class Interpreter implements Visitor<Object> {
     @Override
     public Object visitClassStmt(ClassStmt expr) {
         environment.put(expr.name.getLiteral(),null);
-        AtlasClass klass = new AtlasClass(expr.name);
+        Map<String,AtlasCallable> methods = new HashMap<>();
+        for(FunctionStmt stmt:expr.functions){
+            AtlasFunction func = new AtlasFunction(stmt,environment);
+            methods.put(stmt.name.getLiteral(),func);
+        }
+        AtlasClass klass = new AtlasClass(expr.name,methods);
         environment.put(expr.name.getLiteral(),klass);
         return null;
     }

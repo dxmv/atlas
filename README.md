@@ -68,4 +68,5 @@
 - [x] Class declarations
 - [x] Creating instances
 - [x] Properties on instances
+- [x] Methods on classes
 

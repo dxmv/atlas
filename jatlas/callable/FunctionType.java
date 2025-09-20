@@ -2,5 +2,6 @@ package callable;
 
 public enum FunctionType {
     NONE,
-    FUNCTION
+    FUNCTION,
+    METHOD
 }

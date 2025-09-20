@@ -201,6 +201,9 @@ public class Resolver implements Visitor<Object>{
     @Override
     public Object visitClassStmt(ClassStmt expr) {
         declareVar(expr.name);
+        for(FunctionStmt stmt:expr.functions){
+            resolveFunction(stmt,FunctionType.METHOD);
+        }
         defineVar(expr.name);
         return null;
     }
