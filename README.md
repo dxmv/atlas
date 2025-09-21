@@ -79,5 +79,8 @@
 - [x] Inheriting methods
 - [x] Calling superclass methods
 
+### Phase 12 - Chunks of Bytecode
+- [x] Chunk struct
+
 
 
