@@ -81,6 +81,8 @@
 
 ### Phase 12 - Chunks of Bytecode
 - [x] Chunk struct
+- [x] Constants 
+- [x] Line info
 
 
 

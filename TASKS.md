@@ -73,6 +73,9 @@
 - [x] Superclasses and subclasses
 - [x] Inheriting methods
 - [x] Calling superclass methods
+- [x] Chunks
+- [x] Constants 
+- [x] Line info
 
 
 
