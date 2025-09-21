@@ -6,12 +6,14 @@ import java.util.List;
 
 public class ClassStmt extends Stmt{
 	public Token name;
+	public VariableExpr superclass;
 	public List<FunctionStmt> functions;
 
 
 
-	public ClassStmt (Token name, List<FunctionStmt> functions){
+	public ClassStmt (Token name, VariableExpr superclass, List<FunctionStmt> functions){
 		this.name = name;
+		this.superclass = superclass;
 		this.functions = functions;
 	}
 

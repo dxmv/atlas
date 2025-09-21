@@ -21,7 +21,7 @@ public interface Visitor<R>{
 	R visitWhileStmt(WhileStmt expr);
 	R visitCallExpr(CallExpr expr);
 	R visitFunctionStmt(FunctionStmt expr);
-	R visitRetrunStmt(RetrunStmt expr);
+	R visitReturnStmt(ReturnStmt expr);
 	R visitClassStmt(ClassStmt expr);
 	R visitGetExpr(GetExpr expr);
 	R visitSetExpr(SetExpr expr);

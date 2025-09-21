@@ -74,5 +74,10 @@
 - [ ] Implement static methods
 - [ ] Implement getters and setters
 
+### Phase 11 - Inheritance
+- [x] Superclasses and subclasses
+- [ ] Inheriting methods
+- [ ] Calling superclass methods
+
 
 

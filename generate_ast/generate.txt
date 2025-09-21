@@ -13,8 +13,8 @@ Logical: Expr left, Token operator, Expr right; Expr
 While: Expr condition, Stmt body; Stmt
 Call: Expr callee, Token paren, List<Expr> arguments;Expr
 Function: Token name,List<Token> params,List<Stmt> stmts; Stmt
-Retrun: Token keyword, Expr value;Stmt
-Class: Token name, List<FunctionStmt> functions;Stmt
+Return: Token keyword, Expr value;Stmt
+Class: Token name, VariableExpr superclass, List<FunctionStmt> functions;Stmt
 Get: Token name, Expr expr; Expr
 Set:Expr object,Token name,Expr val;Expr
 This: Token keyword;Expr

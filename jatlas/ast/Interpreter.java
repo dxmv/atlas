@@ -243,7 +243,7 @@ public class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object visitRetrunStmt(RetrunStmt expr) {
+    public Object visitReturnStmt(ReturnStmt expr) {
         Object val = null;
         if(expr.value != null) val = expr.value.accept(this);
         throw new Return(val);
@@ -251,6 +251,14 @@ public class Interpreter implements Visitor<Object> {
 
     @Override
     public Object visitClassStmt(ClassStmt expr) {
+        Object superclass = null;
+        if (expr.superclass != null) {
+            superclass = expr.superclass.accept(this);
+            if (!(superclass instanceof AtlasClass)) {
+                throw new RuntimeError(expr.superclass.identifier,
+                        "Superclass must be a class.");
+            }
+        }
         environment.put(expr.name.getLiteral(),null);
         Map<String,AtlasCallable> methods = new HashMap<>();
         for(FunctionStmt stmt:expr.functions){
@@ -261,7 +269,7 @@ public class Interpreter implements Visitor<Object> {
             AtlasFunction func = new AtlasFunction(stmt,environment,isInit);
             methods.put(stmt.name.getLiteral(),func);
         }
-        AtlasClass klass = new AtlasClass(expr.name,methods);
+        AtlasClass klass = new AtlasClass(expr.name,(AtlasClass) superclass,methods);
         environment.put(expr.name.getLiteral(),klass);
         return null;
     }

@@ -43,13 +43,19 @@ public class Parser {
 
     private ClassStmt classStmt() {
         Token name = consume(IDENTIFIER,"Expect class name.");
+        VariableExpr superclass = null;
+        if(match(LESS)){
+            consume(IDENTIFIER,"Expect class name.");
+            superclass = new VariableExpr(previous());
+        }
+
         consume(LEFT_BRACE, "Expect '{' before class body.");
         List<FunctionStmt> methods = new ArrayList<>();
         while(!isAtEnd() && !check(RIGHT_BRACE)){
             methods.add(funcStmt("method"));
         }
         consume(RIGHT_BRACE, "Expect '{' before class body.");
-        return new ClassStmt(name,methods);
+        return new ClassStmt(name,superclass,methods);
     }
 
     private FunctionStmt funcStmt(String kind) {
@@ -110,7 +116,7 @@ public class Parser {
             expr = expression();
         }
         consume(SEMICOLON,"Expect ';'.");
-        return new RetrunStmt(prev,expr);
+        return new ReturnStmt(prev,expr);
     }
 
     private WhileStmt whileStatement() {

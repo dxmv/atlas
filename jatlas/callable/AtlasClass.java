@@ -10,9 +10,11 @@ import java.util.Map;
 public class AtlasClass implements AtlasCallable{
     private Token name;
     private Map<String,AtlasCallable> methods;
-    public AtlasClass(Token name, Map<String,AtlasCallable> methods) {
+    private AtlasClass superclass;
+    public AtlasClass(Token name, AtlasClass superclass, Map<String,AtlasCallable> methods) {
         this.name = name;
         this.methods = methods;
+        this.superclass = superclass;
     }
 
     @Override

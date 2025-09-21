@@ -190,7 +190,7 @@ public class Resolver implements Visitor<Object>{
     }
 
     @Override
-    public Object visitRetrunStmt(RetrunStmt expr) {
+    public Object visitReturnStmt(ReturnStmt expr) {
         if(currentFunction == FunctionType.NONE){
             ErrorReporter.error(expr.keyword,"Can't return from top-level code.");
         }
@@ -221,6 +221,13 @@ public class Resolver implements Visitor<Object>{
             resolveFunction(stmt,declaration);
         }
         defineVar(expr.name);
+        if(expr.superclass!=null){
+            if(expr.superclass.identifier.getLiteral().equals(expr.name.getLiteral())){
+                ErrorReporter.error(expr.superclass.identifier,"A class can't inherit from itself.");
+                return null;
+            }
+            resolve(expr.superclass);
+        }
         currentClass = prevType;
         return null;
     }
