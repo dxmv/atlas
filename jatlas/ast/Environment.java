@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class Environment {
     private HashMap<String,Object> state;
-    private Environment parent;
+    public Environment parent;
 
     public Environment() {
         this.state = new HashMap<>();
@@ -23,14 +23,24 @@ public class Environment {
     }
 
     public Object get(Token name) {
-        if(!state.containsKey(name.getLiteral())){
-            throw new RuntimeError(name,"The item doesn't exist.");
+        if(state.containsKey(name.getLiteral())) {
+            return state.get(name.getLiteral());
         }
-        return state.get(name.getLiteral());
+        if(parent != null) return parent.get(name);
+        throw new RuntimeError(name,"The item doesn't exist.");
+    }
+
+    public Object get(String name) {
+        if(state.containsKey(name)) {
+            return state.get(name);
+        }
+        if(parent != null) return parent.get(name);
+        // This should not be reachable in user code because the resolver guarantees it.
+        throw new RuntimeException("Undefined variable '" + name + "'. This is an interpreter error.");
     }
 
     public Object assign(Token name,Object value) {
-        if(!state.containsKey(name.getLiteral())){
+        if(state.containsKey(name.getLiteral())){
             throw new RuntimeError(name,"Cannot assign to undefined value.");
         }
         state.put(name.getLiteral(),value);
@@ -38,6 +48,10 @@ public class Environment {
     }
 
     public Object getAt(int dist,Token name){
+        return ancestor(dist).get(name);
+    }
+
+    public Object getAt(int dist, String name) {
         return ancestor(dist).get(name);
     }
 

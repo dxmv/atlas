@@ -260,6 +260,12 @@ public class Interpreter implements Visitor<Object> {
             }
         }
         environment.put(expr.name.getLiteral(),null);
+
+        if(expr.superclass != null) {
+            environment = new Environment(environment);
+            environment.put("super",superclass);
+        }
+
         Map<String,AtlasCallable> methods = new HashMap<>();
         for(FunctionStmt stmt:expr.functions){
             boolean isInit = false;
@@ -270,6 +276,9 @@ public class Interpreter implements Visitor<Object> {
             methods.put(stmt.name.getLiteral(),func);
         }
         AtlasClass klass = new AtlasClass(expr.name,(AtlasClass) superclass,methods);
+        if(expr.superclass != null) {
+            environment = environment.parent;
+        }
         environment.put(expr.name.getLiteral(),klass);
         return null;
     }
@@ -292,6 +301,19 @@ public class Interpreter implements Visitor<Object> {
         Object val = expr.val.accept(this);
         ai.set(expr.name,val);
         return val;
+    }
+
+    @Override
+    public Object visitSuperExpr(SuperExpr expr) {
+        int distance = locals.get(expr);
+        AtlasClass superclass = (AtlasClass) environment.getAt(distance,new Token(TokenType.SUPER,1,"super","super"));
+        AtlasInstance object = (AtlasInstance) environment.getAt(distance-1,new Token(TokenType.SUPER,1,"this","this"));
+
+        AtlasFunction method = superclass.getMethod(expr.method.getLiteral());
+        if(method == null) {
+            throw new RuntimeError(expr.method,"Undefined property '" + expr.method.getLiteral() + "'.");
+        }
+        return method.bind(object);
     }
 
     @Override

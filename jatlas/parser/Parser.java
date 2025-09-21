@@ -284,6 +284,12 @@ public class Parser {
         if(match(FALSE)) { return new LiteralExpr(false); }
         if(match(NIL)) { return new LiteralExpr(null); }
         if(match(NUMBER,STRING)) { return new LiteralExpr(previous().getValue()); }
+        if(match(SUPER)) {
+            Token keyword = previous();
+            consume(DOT,"Expect '.' after 'super'.");
+            Token method = consume(IDENTIFIER, "Expect superclass method name.");
+            return new SuperExpr(keyword,method);
+        }
         if(match(THIS)){return new ThisExpr(previous());}
         if(match(IDENTIFIER)) { return new VariableExpr(previous()); }
         if(match(LEFT_PAREN)){

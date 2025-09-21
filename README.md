@@ -77,7 +77,7 @@
 ### Phase 11 - Inheritance
 - [x] Superclasses and subclasses
 - [x] Inheriting methods
-- [ ] Calling superclass methods
+- [x] Calling superclass methods
 
 
 

@@ -18,3 +18,4 @@ Class: Token name, VariableExpr superclass, List<FunctionStmt> functions;Stmt
 Get: Token name, Expr expr; Expr
 Set:Expr object,Token name,Expr val;Expr
 This: Token keyword;Expr
+Super: Token keyword, Token method;Expr

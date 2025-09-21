@@ -69,5 +69,10 @@
 - [x] This
 - [x] Constructors and initializers
 
+# 21.09.2025
+- [x] Superclasses and subclasses
+- [x] Inheriting methods
+- [x] Calling superclass methods
+
 
 

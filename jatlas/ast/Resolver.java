@@ -209,6 +209,25 @@ public class Resolver implements Visitor<Object>{
         ClassType prevType = currentClass;
         currentClass = ClassType.CLASS;
         declareVar(expr.name);
+        
+        if(expr.superclass != null) {
+            currentClass = ClassType.SUBCLASS;
+            if(expr.superclass.identifier.getLiteral().equals(expr.name.getLiteral())){
+                ErrorReporter.error(expr.superclass.identifier,"A class can't inherit from itself.");
+            }
+        }
+        
+        defineVar(expr.name);
+        
+        if(expr.superclass != null) {
+            resolve(expr.superclass);
+        }
+
+        if(expr.superclass != null) {
+            declareScope();
+            scope.peek().put("super", true);
+        }
+
         declareScope();
 
         scope.peek().put("this",true);
@@ -220,15 +239,11 @@ public class Resolver implements Visitor<Object>{
             resolveFunction(stmt,declaration);
         }
         endScope();
-        
-        defineVar(expr.name);
-        if(expr.superclass!=null){
-            if(expr.superclass.identifier.getLiteral().equals(expr.name.getLiteral())){
-                ErrorReporter.error(expr.superclass.identifier,"A class can't inherit from itself.");
-                return null;
-            }
-            resolve(expr.superclass);
+
+        if(expr.superclass != null) {
+            endScope();
         }
+
         currentClass = prevType;
         return null;
     }
@@ -243,6 +258,17 @@ public class Resolver implements Visitor<Object>{
     public Object visitSetExpr(SetExpr expr) {
         resolve(expr.object);
         resolve(expr.val);
+        return null;
+    }
+
+    @Override
+    public Object visitSuperExpr(SuperExpr expr) {
+        if(currentClass == ClassType.NONE) {
+            ErrorReporter.error(expr.keyword,"Can't use 'super' outside of a class.");
+        } else if (currentClass != ClassType.SUBCLASS) {
+            ErrorReporter.error(expr.keyword, "Can't use 'super' in a class with no superclass.");
+        }
+        resolveLocal(expr.keyword,expr);
         return null;
     }
 
