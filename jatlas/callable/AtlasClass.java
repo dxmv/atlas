@@ -42,6 +42,9 @@ public class AtlasClass implements AtlasCallable{
         if(methods.containsKey(name)){
             return (AtlasFunction) methods.get(name);
         }
+        if(superclass != null){
+            return superclass.getMethod(name);
+        }
         return null;
     }
 

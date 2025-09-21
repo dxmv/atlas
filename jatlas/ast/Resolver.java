@@ -210,7 +210,6 @@ public class Resolver implements Visitor<Object>{
         currentClass = ClassType.CLASS;
         declareVar(expr.name);
         declareScope();
-        endScope();
 
         scope.peek().put("this",true);
         for(FunctionStmt stmt:expr.functions){
@@ -220,6 +219,8 @@ public class Resolver implements Visitor<Object>{
             }
             resolveFunction(stmt,declaration);
         }
+        endScope();
+        
         defineVar(expr.name);
         if(expr.superclass!=null){
             if(expr.superclass.identifier.getLiteral().equals(expr.name.getLiteral())){
