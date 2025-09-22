@@ -4,8 +4,8 @@ pub const OP_CONSTANT: u8 = 0x01;
 type Value = f64;
 
 pub struct Chunk {
-    code: Vec<u8>,
-    constants: Vec<Value>,
+    pub code: Vec<u8>,
+    pub constants: Vec<Value>,
     lines: Vec<usize>,
 }
 
@@ -34,11 +34,12 @@ impl Chunk {
             print!("{:04} ", offset);
             let line = self.lines[offset];
             print!("{:<4}", line);
-            if (code & 0x03) == OP_RETURN {
+            let opcode = get_opcode(*code);
+            if opcode == OP_RETURN {
                 println!("OP_RETURN");
                 continue;
             }
-            if (code & 0x03) == OP_CONSTANT {
+            if opcode == OP_CONSTANT {
                 let constant_index = code >> 2;  // Extract upper 6 bits
                 let constant_value = self.constants[constant_index as usize];
                 println!("OP_CONSTANT {} '{}'", constant_index, constant_value);
@@ -47,4 +48,15 @@ impl Chunk {
             println!("OP_UNKNOWN");
         }
     }
+}
+
+
+// Utility functions for bytecode manipulation
+pub fn get_opcode(byte: u8) -> u8 {
+    byte & 0x03
+}
+
+
+pub fn make_constant_instruction(index: u8) -> u8 {
+    (index << 2) | OP_CONSTANT
 }
