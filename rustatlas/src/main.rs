@@ -1,7 +1,7 @@
 mod chunk;
 mod vm;
 
-use chunk::{Chunk, OP_CONSTANT, OP_RETURN, make_constant_instruction};
+use chunk::{Chunk, OP_RETURN, make_constant_instruction};
 use vm::VM;
 
 fn main() {
