@@ -1,6 +1,6 @@
 
 
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, disassemble_opcode, Value};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, disassemble_opcode, Value};
 
 
 pub enum InterpretResult {
@@ -41,7 +41,41 @@ impl VM {
                         self.push(constant_value);
                         continue;
                 }
+                if opcode == OP_NEGATE {
+                        let constant_index = value; 
+                        let constant_value = self.chunk.constants[constant_index as usize];
+                        self.push(-constant_value);
+                        continue;
+                }
+                if opcode == OP_ADD {
+                        self.handle_binary_operation(opcode);
+                        continue;
+                }
+                if opcode == OP_SUBTRACT {
+                        self.handle_binary_operation(opcode);
+                        continue;
+                }
+                if opcode == OP_MULTIPLY {
+                        self.handle_binary_operation(opcode);
+                        continue;
+                }
+                if opcode == OP_DIVIDE {
+                        self.handle_binary_operation(opcode);
+                        continue;
+                }
                 return InterpretResult::RuntimeError;
+        }
+    }
+
+    pub fn handle_binary_operation(&mut self, opcode: u8) {
+        let value1 = self.pop();
+        let value2 = self.pop();
+        match opcode {
+            OP_ADD => self.push(value1 + value2),
+            OP_SUBTRACT => self.push(value1 - value2),
+            OP_MULTIPLY => self.push(value1 * value2),
+            OP_DIVIDE => self.push(value1 / value2),
+            _ => panic!("Invalid opcode"),
         }
     }
 

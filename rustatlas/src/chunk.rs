@@ -1,5 +1,10 @@
 pub const OP_RETURN: u8 = 0x00;
 pub const OP_CONSTANT: u8 = 0x01;
+pub const OP_NEGATE: u8 = 0x02;
+pub const OP_ADD: u8 = 0x03;
+pub const OP_SUBTRACT: u8 = 0x04;
+pub const OP_MULTIPLY: u8 = 0x05;
+pub const OP_DIVIDE: u8 = 0x06;
 
 pub type Value = f64;
 
@@ -13,6 +18,10 @@ pub fn disassemble_opcode(byte: u8) -> (u8,u8) {
 
 pub fn make_constant_instruction(index: u8) -> u8 {
     (index << 2) | OP_CONSTANT
+}
+
+pub fn make_negate_instruction(index: u8) -> u8 {
+    (index << 2) | OP_NEGATE
 }
 
 pub struct Chunk {
@@ -55,6 +64,28 @@ impl Chunk {
                 let constant_index = value;  // Extract upper 6 bits
                 let constant_value = self.constants[constant_index as usize];
                 println!("OP_CONSTANT {} '{}'", constant_index, constant_value);
+                continue;
+            }
+            if opcode == OP_NEGATE {
+                let constant_index = value;  // Extract upper 6 bits
+                let constant_value = - self.constants[constant_index as usize];
+                println!("OP_NEGATE {} '{}'", constant_index, constant_value);
+                continue;
+            }
+            if opcode == OP_ADD {
+                println!("OP_ADD");
+                continue;
+            }
+            if opcode == OP_SUBTRACT {
+                println!("OP_SUBTRACT");
+                continue;
+            }
+            if opcode == OP_MULTIPLY {
+                println!("OP_MULTIPLY");
+                continue;
+            }
+            if opcode == OP_DIVIDE {
+                println!("OP_DIVIDE");
                 continue;
             }
             println!("OP_UNKNOWN");
