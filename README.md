@@ -84,5 +84,10 @@
 - [x] Constants 
 - [x] Line info
 
+### Phase 13 - Virtual machine
+- [x] An Instruction Execution Machine
+- [x] A value stack manipulator
+- [x] A simple calculator 
+
 
 
