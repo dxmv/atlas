@@ -4,26 +4,26 @@
 pub enum TokenType{
 
         // Single-character tokens
-        LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
-        COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+        LeftParen, RightParen, LeftBrace, RightBrace,
+        Comma, Dot, Minus, Plus, Semicolon, Slash, Star,
 
         // One or two character tokens
-        BANG, BANG_EQUAL,
-        EQUAL, EQUAL_EQUAL,
-        GREATER, GREATER_EQUAL,
-        LESS, LESS_EQUAL,
+        Bang, BangEqual,
+        Equal, EqualEqual,
+        Greater, GreaterEqual,
+        Less, LessEqual,
 
         // Literals
-        IDENTIFIER, STRING, NUMBER,
+        Identifier, String, Number,
 
         // Keywords
-        AND, CLASS, ELSE, FALSE, FUNC, FOR, IF, NIL, OR,
-        PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
+        And, Class, Else, False, Func, For, If, Nil, Or,
+        Print, Return, Super, This, True, Var, While,
 
         // End of file
-        EOF,
+        Eof,
         // Error tokens
-        ERROR,
+        Error,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -47,22 +47,22 @@ impl Token {
 
 pub fn is_keyword(identifier: &str) -> Option<TokenType> {
         match identifier {
-                "and" => Some(TokenType::AND),
-                "or" => Some(TokenType::OR),
-                "class" => Some(TokenType::CLASS),
-                "if" => Some(TokenType::IF),
-                "else" => Some(TokenType::ELSE),
-                "for" => Some(TokenType::FOR),
-                "while" => Some(TokenType::WHILE),
-                "return" => Some(TokenType::RETURN),
-                "false" => Some(TokenType::FALSE),
-                "true" => Some(TokenType::TRUE),
-                "fun" => Some(TokenType::FUNC),
-                "var" => Some(TokenType::VAR),
-                "nil" => Some(TokenType::NIL),
-                "this" => Some(TokenType::THIS),
-                "super" => Some(TokenType::SUPER),
-                "print" => Some(TokenType::PRINT),
+                "and" => Some(TokenType::And),
+                "or" => Some(TokenType::Or),
+                "class" => Some(TokenType::Class),
+                "if" => Some(TokenType::If),
+                "else" => Some(TokenType::Else),
+                "for" => Some(TokenType::For),
+                "while" => Some(TokenType::While),
+                "return" => Some(TokenType::Return),
+                "false" => Some(TokenType::False),
+                "true" => Some(TokenType::True),
+                "fun" => Some(TokenType::Func),
+                "var" => Some(TokenType::Var),
+                "nil" => Some(TokenType::Nil),
+                "this" => Some(TokenType::This),
+                "super" => Some(TokenType::Super),
+                "print" => Some(TokenType::Print),
                 _ => None,
         }
 }

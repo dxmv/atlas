@@ -11,7 +11,6 @@ use std::path::Path;
 
 use compiler::Compiler;
 use chunk::Chunk;
-use scanner::Scanner;
 
 fn main() {
     let path = Path::new("./test.txt");
@@ -34,4 +33,5 @@ fn main() {
         println!("Compilation failed");
         return;
     }
+    chunk.disassemble("chunk");
 }

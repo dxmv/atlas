@@ -23,7 +23,7 @@ impl Scanner{
                 loop {
                         let token = self.scan_token();
                         println!("{:?}", token);
-                        if token.token_type == TokenType::EOF {
+                        if token.token_type == TokenType::Eof {
                                 tokens.push(token);
                                 break;
                         }
@@ -35,25 +35,25 @@ impl Scanner{
         pub fn scan_token(&mut self) -> Token {
                 self.start = self.current;
                 if self.isAtEnd() {
-                        return Token::new(TokenType::EOF, self.line, self.current, 0);
+                        return Token::new(TokenType::Eof, self.line, self.current, 0);
                 }
                 let c = self.advance();
                 let token = match c {
-                        '(' => return self.create_token(TokenType::LEFT_PAREN),
-                        ')' => return self.create_token(TokenType::RIGHT_PAREN),
-                        '{' => return self.create_token(TokenType::LEFT_BRACE),
-                        '}' => return self.create_token(TokenType::RIGHT_BRACE),
-                        '+' => return self.create_token(TokenType::PLUS),
-                        '-' => return self.create_token(TokenType::MINUS),
-                        '*' => return self.create_token(TokenType::STAR),
-                        '.' => return self.create_token(TokenType::DOT),
-                        ',' => return self.create_token(TokenType::COMMA),
-                        ';' => return self.create_token(TokenType::SEMICOLON),
-                        '/' => return self.create_token(TokenType::SLASH),
-                        '=' => if self.matches_char(self.peek(), '=') { self.advance(); return self.create_token(TokenType::EQUAL_EQUAL); } else { return self.create_token(TokenType::EQUAL); },
-                        '>' => if self.matches_char(self.peek(), '=') { self.advance(); return self.create_token(TokenType::GREATER_EQUAL); } else { return self.create_token(TokenType::GREATER); },
-                        '<' => if self.matches_char(self.peek(), '=') { self.advance(); return self.create_token(TokenType::LESS_EQUAL); } else { return self.create_token(TokenType::LESS); },
-                        '!' => if self.matches_char(self.peek(), '=') { self.advance(); return self.create_token(TokenType::BANG_EQUAL); } else { return self.create_token(TokenType::BANG); },
+                        '(' => return self.create_token(TokenType::LeftParen),
+                        ')' => return self.create_token(TokenType::RightParen),
+                        '{' => return self.create_token(TokenType::LeftBrace),
+                        '}' => return self.create_token(TokenType::RightBrace),
+                        '+' => return self.create_token(TokenType::Plus),
+                        '-' => return self.create_token(TokenType::Minus),
+                        '*' => return self.create_token(TokenType::Star),
+                        '.' => return self.create_token(TokenType::Dot),
+                        ',' => return self.create_token(TokenType::Comma),
+                        ';' => return self.create_token(TokenType::Semicolon),
+                        '/' => return self.create_token(TokenType::Slash),
+                        '=' => if self.matches_char(self.peek(), '=') { self.advance(); return self.create_token(TokenType::EqualEqual); } else { return self.create_token(TokenType::Equal); },
+                        '>' => if self.matches_char(self.peek(), '=') { self.advance(); return self.create_token(TokenType::GreaterEqual); } else { return self.create_token(TokenType::Greater); },
+                        '<' => if self.matches_char(self.peek(), '=') { self.advance(); return self.create_token(TokenType::LessEqual); } else { return self.create_token(TokenType::Less); },
+                        '!' => if self.matches_char(self.peek(), '=') { self.advance(); return self.create_token(TokenType::BangEqual); } else { return self.create_token(TokenType::Bang); },
                         '"' => return self.handle_string(),
                         '0'..='9' => return self.handle_number(),
                         'a'..='z' | 'A'..='Z' => return self.handle_identifier(),
@@ -74,7 +74,7 @@ impl Scanner{
                         return self.create_error_token("Unterminated string".to_string());
                 }
                 self.advance(); // consume closing quote
-                return self.create_token(TokenType::STRING);
+                return self.create_token(TokenType::String);
         }
 
         /**
@@ -89,7 +89,7 @@ impl Scanner{
                 if let Some(token_type) = is_keyword(&identifier) {
                         return self.create_token(token_type);
                 }
-                return self.create_token(TokenType::IDENTIFIER);
+                return self.create_token(TokenType::Identifier);
         }
 
         /**
@@ -113,7 +113,7 @@ impl Scanner{
                         // if a digit, advance
                         self.advance();
                 }
-                return self.create_token(TokenType::NUMBER);
+                return self.create_token(TokenType::Number);
         }
 
         /**
@@ -129,7 +129,7 @@ impl Scanner{
         */
         fn create_error_token(&self, _message: String) -> Token {
                 let length = self.current - self.start;
-                Token::new(TokenType::ERROR, self.line, self.start, length)
+                Token::new(TokenType::Error, self.line, self.start, length)
         }
 
         fn isAtEnd(&self) -> bool {

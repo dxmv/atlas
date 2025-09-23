@@ -102,9 +102,9 @@
 - [x] Parse token by token
 - [x] Parse numbers
 - [x] Parse grouping and unary
-- [ ] Presednce parsing
-- [ ] Parse infix expressions
-- [ ] Pratt parsing
+- [x] Presednce parsing
+- [x] Parse infix expressions
+- [x] Pratt parsing
 
 
 
