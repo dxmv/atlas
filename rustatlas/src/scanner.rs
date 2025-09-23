@@ -1,4 +1,4 @@
-use crate::token::{Token, TokenType};
+use crate::token::{is_keyword, Token, TokenType};
 
 
 pub struct Scanner {
@@ -55,6 +55,9 @@ impl Scanner{
                         '<' => if self.matches_char(self.peek(), '=') { self.advance(); return self.createToken(TokenType::LESS_EQUAL); } else { return self.createToken(TokenType::LESS); },
                         '!' => if self.matches_char(self.peek(), '=') { self.advance(); return self.createToken(TokenType::BANG_EQUAL); } else { return self.createToken(TokenType::BANG); },
                         '"' => return self.handle_string(),
+                        '0'..='9' => return self.handle_number(),
+                        'a'..='z' | 'A'..='Z' => return self.handle_identifier(),
+                        '\n' | '\t' | '\r' | ' ' => return self.scanToken(),
                         _=>self.createErrorToken(format!("Unexpected character: {}", c))
                 };
                 token
@@ -72,6 +75,45 @@ impl Scanner{
                 }
                 self.advance(); // consume closing quote
                 return self.createToken(TokenType::STRING);
+        }
+
+        /**
+        Handles identifiers
+        */
+        fn handle_identifier(&mut self) -> Token {
+                while !self.isAtEnd() && self.peek().is_alphanumeric() {
+                        self.advance();
+                }
+                // check if the identifier is a keyword
+                let identifier = self.source[self.start..self.current].to_string();
+                if let Some(token_type) = is_keyword(&identifier) {
+                        return self.createToken(token_type);
+                }
+                return self.createToken(TokenType::IDENTIFIER);
+        }
+
+        /**
+        Handles numbers
+        */
+        fn handle_number(&mut self) -> Token {
+                let mut num_dots: usize = 0;
+                while !self.isAtEnd() {
+                        // handle 1 decimal point
+                        if self.matches_char(self.peek(), '.') {
+                                num_dots += 1;
+                                if num_dots > 1 {
+                                        return self.createErrorToken("Invalid number format".to_string());
+                                }
+                                self.advance();
+                        }
+                        // if not a digit, break
+                        if !self.peek().is_digit(10) {
+                                break;
+                        }
+                        // if a digit, advance
+                        self.advance();
+                }
+                return self.createToken(TokenType::NUMBER);
         }
 
         /**

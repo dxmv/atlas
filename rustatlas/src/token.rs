@@ -44,3 +44,25 @@ impl Token {
                 &source[self.start..self.start + self.length]
         }
 }
+
+pub fn is_keyword(identifier: &str) -> Option<TokenType> {
+        match identifier {
+                "and" => Some(TokenType::AND),
+                "or" => Some(TokenType::OR),
+                "class" => Some(TokenType::CLASS),
+                "if" => Some(TokenType::IF),
+                "else" => Some(TokenType::ELSE),
+                "for" => Some(TokenType::FOR),
+                "while" => Some(TokenType::WHILE),
+                "return" => Some(TokenType::RETURN),
+                "false" => Some(TokenType::FALSE),
+                "true" => Some(TokenType::TRUE),
+                "fun" => Some(TokenType::FUNC),
+                "var" => Some(TokenType::VAR),
+                "nil" => Some(TokenType::NIL),
+                "this" => Some(TokenType::THIS),
+                "super" => Some(TokenType::SUPER),
+                "print" => Some(TokenType::PRINT),
+                _ => None,
+        }
+}
