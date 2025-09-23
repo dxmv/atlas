@@ -35,38 +35,59 @@ impl Scanner{
         pub fn scanToken(&mut self) -> Token {
                 self.start = self.current;
                 if self.isAtEnd() {
-                        return Token::new(TokenType::EOF, self.line, String::new(), None);
+                        return Token::new(TokenType::EOF, self.line, self.current, 0);
                 }
                 let c = self.advance();
                 let token = match c {
-                        '(' => return self.createToken(TokenType::LEFT_PAREN, String::new(), None),
-                        ')' => return self.createToken(TokenType::RIGHT_PAREN, String::new(), None),
-                        '{' => return self.createToken(TokenType::LEFT_BRACE, String::new(), None),
-                        '}' => return self.createToken(TokenType::RIGHT_BRACE, String::new(), None),
-                        '+' => return self.createToken(TokenType::PLUS, String::new(), None),
-                        '-' => return self.createToken(TokenType::MINUS, String::new(), None),
-                        '*' => return self.createToken(TokenType::STAR, String::new(), None),
-                        '.' => return self.createToken(TokenType::DOT, String::new(), None),
-                        ',' => return self.createToken(TokenType::COMMA, String::new(), None),
-                        ';' => return self.createToken(TokenType::SEMICOLON, String::new(), None),
-                        '/' => return self.createToken(TokenType::SLASH, String::new(), None),
+                        '(' => return self.createToken(TokenType::LEFT_PAREN),
+                        ')' => return self.createToken(TokenType::RIGHT_PAREN),
+                        '{' => return self.createToken(TokenType::LEFT_BRACE),
+                        '}' => return self.createToken(TokenType::RIGHT_BRACE),
+                        '+' => return self.createToken(TokenType::PLUS),
+                        '-' => return self.createToken(TokenType::MINUS),
+                        '*' => return self.createToken(TokenType::STAR),
+                        '.' => return self.createToken(TokenType::DOT),
+                        ',' => return self.createToken(TokenType::COMMA),
+                        ';' => return self.createToken(TokenType::SEMICOLON),
+                        '/' => return self.createToken(TokenType::SLASH),
+                        '=' => if self.matches_char(self.peek(), '=') { self.advance(); return self.createToken(TokenType::EQUAL_EQUAL); } else { return self.createToken(TokenType::EQUAL); },
+                        '>' => if self.matches_char(self.peek(), '=') { self.advance(); return self.createToken(TokenType::GREATER_EQUAL); } else { return self.createToken(TokenType::GREATER); },
+                        '<' => if self.matches_char(self.peek(), '=') { self.advance(); return self.createToken(TokenType::LESS_EQUAL); } else { return self.createToken(TokenType::LESS); },
+                        '!' => if self.matches_char(self.peek(), '=') { self.advance(); return self.createToken(TokenType::BANG_EQUAL); } else { return self.createToken(TokenType::BANG); },
+                        '"' => return self.handle_string(),
                         _=>self.createErrorToken(format!("Unexpected character: {}", c))
                 };
                 token
         }
 
         /**
+        Handles strings
+        */
+        fn handle_string(&mut self) -> Token {
+                while !self.isAtEnd() && self.peek() != '"' {
+                        self.advance();
+                }
+                if self.isAtEnd() {
+                        return self.createErrorToken("Unterminated string".to_string());
+                }
+                self.advance(); // consume closing quote
+                return self.createToken(TokenType::STRING);
+        }
+
+        /**
           Creates a new token
         */
-        fn createToken(&self, token_type: TokenType, literal: String, value: Option<String>) -> Token {
-                Token::new(token_type, self.line, literal, value)
+        fn createToken(&self, token_type: TokenType) -> Token {
+                let length = self.current - self.start;
+                Token::new(token_type, self.line, self.start, length)
         }
 
         /**
         Create error token
         */
-        fn createErrorToken(&self, message: String) -> Token {
-                Token::new(TokenType::ERROR, self.line, message, None)
+        fn createErrorToken(&self, _message: String) -> Token {
+                let length = self.current - self.start;
+                Token::new(TokenType::ERROR, self.line, self.start, length)
         }
 
         fn isAtEnd(&self) -> bool {
@@ -95,5 +116,13 @@ impl Scanner{
         */
         fn peekNext(&self) -> char {
                 self.source.chars().nth(self.current + 1).unwrap()
+        }
+
+
+        /**
+        Check if the given character is the same as the other character
+        */
+        fn matches_char(&self, c: char, c2: char) -> bool {
+                c == c2
         }
 }

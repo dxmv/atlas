@@ -30,12 +30,17 @@ pub enum TokenType{
 pub struct Token {
         pub token_type: TokenType,
         pub line: usize,
-        pub literal: String,
-        pub value: Option<String>,
+        pub start: usize,
+        pub length: usize,
 }
 
 impl Token {
-        pub fn new(token_type: TokenType, line: usize, literal: String, value: Option<String>) -> Self {
-                Token { token_type, line, literal, value }
+        pub fn new(token_type: TokenType, line: usize, start: usize, length: usize) -> Self {
+                Token { token_type, line, start, length }
+        }
+
+        /// Extract the actual text of this token from the source string
+        pub fn lexeme<'a>(&self, source: &'a str) -> &'a str {
+                &source[self.start..self.start + self.length]
         }
 }
