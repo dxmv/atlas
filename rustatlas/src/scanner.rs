@@ -18,10 +18,10 @@ impl Scanner{
                 }
         }
 
-        pub fn scan(&mut self) -> Vec<Token> {
+        pub fn scan_tokens(&mut self) -> Vec<Token> {
                 let mut tokens = Vec::new();
                 loop {
-                        let token = self.scanToken();
+                        let token = self.scan_token();
                         println!("{:?}", token);
                         if token.token_type == TokenType::EOF {
                                 tokens.push(token);
@@ -32,33 +32,33 @@ impl Scanner{
                 tokens
         }
 
-        pub fn scanToken(&mut self) -> Token {
+        pub fn scan_token(&mut self) -> Token {
                 self.start = self.current;
                 if self.isAtEnd() {
                         return Token::new(TokenType::EOF, self.line, self.current, 0);
                 }
                 let c = self.advance();
                 let token = match c {
-                        '(' => return self.createToken(TokenType::LEFT_PAREN),
-                        ')' => return self.createToken(TokenType::RIGHT_PAREN),
-                        '{' => return self.createToken(TokenType::LEFT_BRACE),
-                        '}' => return self.createToken(TokenType::RIGHT_BRACE),
-                        '+' => return self.createToken(TokenType::PLUS),
-                        '-' => return self.createToken(TokenType::MINUS),
-                        '*' => return self.createToken(TokenType::STAR),
-                        '.' => return self.createToken(TokenType::DOT),
-                        ',' => return self.createToken(TokenType::COMMA),
-                        ';' => return self.createToken(TokenType::SEMICOLON),
-                        '/' => return self.createToken(TokenType::SLASH),
-                        '=' => if self.matches_char(self.peek(), '=') { self.advance(); return self.createToken(TokenType::EQUAL_EQUAL); } else { return self.createToken(TokenType::EQUAL); },
-                        '>' => if self.matches_char(self.peek(), '=') { self.advance(); return self.createToken(TokenType::GREATER_EQUAL); } else { return self.createToken(TokenType::GREATER); },
-                        '<' => if self.matches_char(self.peek(), '=') { self.advance(); return self.createToken(TokenType::LESS_EQUAL); } else { return self.createToken(TokenType::LESS); },
-                        '!' => if self.matches_char(self.peek(), '=') { self.advance(); return self.createToken(TokenType::BANG_EQUAL); } else { return self.createToken(TokenType::BANG); },
+                        '(' => return self.create_token(TokenType::LEFT_PAREN),
+                        ')' => return self.create_token(TokenType::RIGHT_PAREN),
+                        '{' => return self.create_token(TokenType::LEFT_BRACE),
+                        '}' => return self.create_token(TokenType::RIGHT_BRACE),
+                        '+' => return self.create_token(TokenType::PLUS),
+                        '-' => return self.create_token(TokenType::MINUS),
+                        '*' => return self.create_token(TokenType::STAR),
+                        '.' => return self.create_token(TokenType::DOT),
+                        ',' => return self.create_token(TokenType::COMMA),
+                        ';' => return self.create_token(TokenType::SEMICOLON),
+                        '/' => return self.create_token(TokenType::SLASH),
+                        '=' => if self.matches_char(self.peek(), '=') { self.advance(); return self.create_token(TokenType::EQUAL_EQUAL); } else { return self.create_token(TokenType::EQUAL); },
+                        '>' => if self.matches_char(self.peek(), '=') { self.advance(); return self.create_token(TokenType::GREATER_EQUAL); } else { return self.create_token(TokenType::GREATER); },
+                        '<' => if self.matches_char(self.peek(), '=') { self.advance(); return self.create_token(TokenType::LESS_EQUAL); } else { return self.create_token(TokenType::LESS); },
+                        '!' => if self.matches_char(self.peek(), '=') { self.advance(); return self.create_token(TokenType::BANG_EQUAL); } else { return self.create_token(TokenType::BANG); },
                         '"' => return self.handle_string(),
                         '0'..='9' => return self.handle_number(),
                         'a'..='z' | 'A'..='Z' => return self.handle_identifier(),
-                        '\n' | '\t' | '\r' | ' ' => return self.scanToken(),
-                        _=>self.createErrorToken(format!("Unexpected character: {}", c))
+                        '\n' | '\t' | '\r' | ' ' => return self.scan_token(),
+                        _=>self.create_error_token(format!("Unexpected character: {}", c))
                 };
                 token
         }
@@ -71,10 +71,10 @@ impl Scanner{
                         self.advance();
                 }
                 if self.isAtEnd() {
-                        return self.createErrorToken("Unterminated string".to_string());
+                        return self.create_error_token("Unterminated string".to_string());
                 }
                 self.advance(); // consume closing quote
-                return self.createToken(TokenType::STRING);
+                return self.create_token(TokenType::STRING);
         }
 
         /**
@@ -87,9 +87,9 @@ impl Scanner{
                 // check if the identifier is a keyword
                 let identifier = self.source[self.start..self.current].to_string();
                 if let Some(token_type) = is_keyword(&identifier) {
-                        return self.createToken(token_type);
+                        return self.create_token(token_type);
                 }
-                return self.createToken(TokenType::IDENTIFIER);
+                return self.create_token(TokenType::IDENTIFIER);
         }
 
         /**
@@ -102,7 +102,7 @@ impl Scanner{
                         if self.matches_char(self.peek(), '.') {
                                 num_dots += 1;
                                 if num_dots > 1 {
-                                        return self.createErrorToken("Invalid number format".to_string());
+                                        return self.create_error_token("Invalid number format".to_string());
                                 }
                                 self.advance();
                         }
@@ -113,13 +113,13 @@ impl Scanner{
                         // if a digit, advance
                         self.advance();
                 }
-                return self.createToken(TokenType::NUMBER);
+                return self.create_token(TokenType::NUMBER);
         }
 
         /**
           Creates a new token
         */
-        fn createToken(&self, token_type: TokenType) -> Token {
+        fn create_token(&self, token_type: TokenType) -> Token {
                 let length = self.current - self.start;
                 Token::new(token_type, self.line, self.start, length)
         }
@@ -127,7 +127,7 @@ impl Scanner{
         /**
         Create error token
         */
-        fn createErrorToken(&self, _message: String) -> Token {
+        fn create_error_token(&self, _message: String) -> Token {
                 let length = self.current - self.start;
                 Token::new(TokenType::ERROR, self.line, self.start, length)
         }
@@ -156,7 +156,7 @@ impl Scanner{
         /**
         Returns the next character without consuming it
         */
-        fn peekNext(&self) -> char {
+        fn peek_next(&self) -> char {
                 self.source.chars().nth(self.current + 1).unwrap()
         }
 

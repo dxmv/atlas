@@ -1,6 +1,6 @@
 
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub enum TokenType{
 
         // Single-character tokens
@@ -26,7 +26,7 @@ pub enum TokenType{
         ERROR,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Token {
         pub token_type: TokenType,
         pub line: usize,

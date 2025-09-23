@@ -2,12 +2,15 @@ mod chunk;
 mod vm;
 mod scanner;
 mod token;
+mod compiler;
 
 // file stuff
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
+use compiler::Compiler;
+use chunk::Chunk;
 use scanner::Scanner;
 
 fn main() {
@@ -23,6 +26,14 @@ fn main() {
         Ok(_) => println!("Read file successfully"),
         Err(e) => panic!("Error reading file: {}", e),
     }
-    let mut scanner = Scanner::new(source);
-    let _tokens = scanner.scan();
+    let scanner = Scanner::new(source);
+
+    let mut compiler = Compiler::new(scanner);
+    let mut chunk = Chunk::new();
+    let success = compiler.compile(&mut chunk);
+    if !success {
+        println!("Compilation failed");
+        return;
+    }
+    chunk.print();
 }
