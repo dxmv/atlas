@@ -89,5 +89,20 @@
 - [x] A value stack manipulator
 - [x] A simple calculator 
 
+### Phase 14 - Scanning on demand
+- [x] Simple scanner loop
+- [x] Single char, double char tokens
+- [x] Literals
+- [x] Numbers
+- [x] Identifiers
+- [x] Keywords
+- [x] spaces, new lines etc.
+
+### Phase 15 - Compilling expressions
+- [x] Parse token by token
+- [x] Parse numbers
+- [ ] Parse grouping and unary
+- [ ] Pratt parsing
+
 
 

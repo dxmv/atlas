@@ -1,4 +1,4 @@
-use crate::chunk::Chunk;
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE};
 use crate::scanner::Scanner;
 use crate::token::Token;
 use crate::token::TokenType;
@@ -29,7 +29,33 @@ impl Compiler {
     pub fn compile(&mut self, chunk: &mut Chunk) -> bool {
         self.current_token = self.advance();
 
+        // at the end of the expression, emit a return
+        self.emit_byte(chunk, OP_RETURN);
+
         !self.had_error
+    }
+
+    pub fn group(&mut self, chunk: &mut Chunk) {
+        self.expression(chunk);
+        self.consume(TokenType::RIGHT_PAREN, "Expect ')' after expression.");
+    }
+
+    /**
+     * Emits a number to the chunk
+     */
+    pub fn number(&mut self, chunk: &mut Chunk) {
+        let value = self.current_token.lexeme(&self.scanner.source).parse::<f64>().unwrap();
+        let constant_index = chunk.add_constant(value);
+        if constant_index > 63 {
+            self.error(self.current_token, "Too many constants in one chunk.");
+            return;
+        }
+
+        self.emit_byte(chunk, self.make_constant_instruction(constant_index));
+    }
+
+    pub fn expression(&mut self, chunk: &mut Chunk) {
+        return;
     }
 
     /**
@@ -42,9 +68,13 @@ impl Compiler {
                 let error_message = current_token.lexeme(&self.scanner.source).to_string();
                 self.error(current_token, &error_message);
         }
+
         current_token
     }
 
+    /**
+     * Consumes the current token if it is of the given type
+     */
     pub fn consume(&mut self, token_type: TokenType, message: &str) -> Token {
         if self.current_token.token_type == token_type {
             return self.advance();
@@ -60,6 +90,27 @@ impl Compiler {
         self.had_error = true;
         self.panic_mode = true;
         println!("[line {}] Error: {}", token.line, message);
+    }
+
+    /**
+     * Emits a byte to the chunk
+     */
+    pub fn emit_byte(&mut self, chunk: &mut Chunk, byte: u8) {
+        chunk.write(byte, self.current_token.line);
+    }
+
+    /**
+     * Makes a constant instruction
+     */
+    fn make_constant_instruction(&self, index: u8) -> u8 {
+        (index << 2) | OP_CONSTANT
+    }
+    
+    /**
+     * Makes a negate instruction
+     */
+    fn make_negate_instruction(&self, index: u8) -> u8 {
+        (index << 2) | OP_NEGATE
     }
 
 }

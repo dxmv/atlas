@@ -77,5 +77,15 @@
 - [x] Constants 
 - [x] Line info
 
+# 23.09.2025
+- [x] Single char, double char tokens
+- [x] Literals
+- [x] Numbers
+- [x] Identifiers
+- [x] Keywords
+- [x] spaces, new lines etc.
+- [ ] Parse token by token
+
+
 
 

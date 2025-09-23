@@ -16,13 +16,7 @@ pub fn disassemble_opcode(byte: u8) -> (u8,u8) {
 }
 
 
-pub fn make_constant_instruction(index: u8) -> u8 {
-    (index << 2) | OP_CONSTANT
-}
 
-pub fn make_negate_instruction(index: u8) -> u8 {
-    (index << 2) | OP_NEGATE
-}
 
 pub struct Chunk {
     pub code: Vec<u8>,
