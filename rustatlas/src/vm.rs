@@ -1,7 +1,7 @@
 
 
 use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, disassemble_opcode, Value};
-
+use crate::compiler::{Compiler};
 
 pub enum InterpretResult {
     Ok,
@@ -20,62 +20,61 @@ impl VM {
         VM { chunk: Chunk::new(), ip: 0, stack: vec![] }
     }
 
+    pub fn interpret(&mut self, source: String) -> InterpretResult {
+        let mut compiler = Compiler::new(source);
+        let mut chunk = Chunk::new();
+        if !compiler.compile(&mut chunk) {
+            return InterpretResult::CompileError;
+        }
+        self.chunk = chunk;
+        self.ip = 0;
+        self.run()
+    }
+
     /**
         Run the VM
     */
-    pub fn run(&mut self) -> InterpretResult {
+    fn run(&mut self) -> InterpretResult {
         loop {
-                // get the instruction, move the ip forward
-                let insturction = self.chunk.code[self.ip];
-                self.ip += 1;
-                let (opcode,value) = disassemble_opcode(insturction);
-                // handle the instruction
-                if opcode == OP_RETURN {
-                        let value = self.pop();
-                        println!("{}", value);
-                        return InterpretResult::Ok;
+            let instruction = self.chunk.code[self.ip];
+            self.ip += 1;
+            let (opcode, value) = disassemble_opcode(instruction);
+
+            match opcode {
+                OP_RETURN => {
+                    let value = self.pop();
+                    println!("{}", value);
+                    return InterpretResult::Ok;
                 }
-                if opcode == OP_CONSTANT {
-                        let constant_index = value; 
-                        let constant_value = self.chunk.constants[constant_index as usize];
-                        self.push(constant_value);
-                        continue;
+                OP_CONSTANT => {
+                    let constant_index = value;
+                    let constant = self.chunk.constants[constant_index as usize];
+                    self.push(constant);
                 }
-                if opcode == OP_NEGATE {
-                        let constant_index = value; 
-                        let constant_value = self.chunk.constants[constant_index as usize];
-                        self.push(-constant_value);
-                        continue;
+                OP_NEGATE => {
+                    let constant_index = value;
+                    let constant = self.chunk.constants[constant_index as usize];
+                    self.push(-constant);
                 }
-                if opcode == OP_ADD {
-                        self.handle_binary_operation(opcode);
-                        continue;
+                OP_ADD | OP_SUBTRACT | OP_MULTIPLY | OP_DIVIDE => {
+                    self.handle_binary_operation(opcode);
                 }
-                if opcode == OP_SUBTRACT {
-                        self.handle_binary_operation(opcode);
-                        continue;
+                _ => {
+                    return InterpretResult::RuntimeError;
                 }
-                if opcode == OP_MULTIPLY {
-                        self.handle_binary_operation(opcode);
-                        continue;
-                }
-                if opcode == OP_DIVIDE {
-                        self.handle_binary_operation(opcode);
-                        continue;
-                }
-                return InterpretResult::RuntimeError;
+            }
         }
     }
 
-    pub fn handle_binary_operation(&mut self, opcode: u8) {
-        let value1 = self.pop();
-        let value2 = self.pop();
+    fn handle_binary_operation(&mut self, opcode: u8) {
+        let b = self.pop();
+        let a = self.pop();
         match opcode {
-            OP_ADD => self.push(value1 + value2),
-            OP_SUBTRACT => self.push(value1 - value2),
-            OP_MULTIPLY => self.push(value1 * value2),
-            OP_DIVIDE => self.push(value1 / value2),
-            _ => panic!("Invalid opcode"),
+            OP_ADD => self.push(a + b),
+            OP_SUBTRACT => self.push(a - b),
+            OP_MULTIPLY => self.push(a * b),
+            OP_DIVIDE => self.push(a / b),
+            _ => (), // Unreachable.
         }
     }
 

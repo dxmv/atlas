@@ -1,116 +1,123 @@
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE};
 use crate::scanner::Scanner;
 use crate::token::Token;
 use crate::token::TokenType;
 
-
 pub struct Compiler {
-        pub previous_token: Token,
-        pub current_token: Token,
-        pub had_error: bool,
-        pub panic_mode: bool,
-        pub scanner: Scanner,
+    pub previous_token: Token,
+    pub current_token: Token,
+    pub had_error: bool,
+    pub panic_mode: bool,
+    pub scanner: Scanner,
 }
 
 impl Compiler {
-    pub fn new(scanner: Scanner) -> Self {
+    pub fn new(source: String) -> Self {
         Compiler {
-                previous_token: Token::new(TokenType::EOF, 0, 0, 0),
-                current_token: Token::new(TokenType::EOF, 0, 0, 0),
-                had_error: false,
-                panic_mode: false,
-                scanner: scanner,
+            previous_token: Token::new(TokenType::EOF, 0, 0, 0),
+            current_token: Token::new(TokenType::EOF, 0, 0, 0),
+            had_error: false,
+            panic_mode: false,
+            scanner: Scanner::new(source),
         }
     }
 
-    /**
-     * Compiles an expression into a chunk of bytecode
-     */
     pub fn compile(&mut self, chunk: &mut Chunk) -> bool {
         self.current_token = self.advance();
-
-        // at the end of the expression, emit a return
+        self.expression(chunk);
+        self.consume(TokenType::EOF, "Expect end of expression.");
         self.emit_byte(chunk, OP_RETURN);
-
         !self.had_error
     }
 
-    pub fn group(&mut self, chunk: &mut Chunk) {
-        self.expression(chunk);
-        self.consume(TokenType::RIGHT_PAREN, "Expect ')' after expression.");
-    }
-
-    /**
-     * Emits a number to the chunk
-     */
-    pub fn number(&mut self, chunk: &mut Chunk) {
-        let value = self.current_token.lexeme(&self.scanner.source).parse::<f64>().unwrap();
-        let constant_index = chunk.add_constant(value);
-        if constant_index > 63 {
-            self.error(self.current_token, "Too many constants in one chunk.");
-            return;
-        }
-
-        self.emit_byte(chunk, self.make_constant_instruction(constant_index));
-    }
-
-    pub fn expression(&mut self, chunk: &mut Chunk) {
+    fn expression(&mut self, chunk: &mut Chunk) {
         return;
     }
-
-    /**
-     * Advances the current token
-     */
-    pub fn advance(&mut self) -> Token {
-        self.previous_token = self.current_token;
-        let current_token = self.scanner.scan_token();
-        if current_token.token_type == TokenType::ERROR {
-                let error_message = current_token.lexeme(&self.scanner.source).to_string();
-                self.error(current_token, &error_message);
+    
+    fn unary(&mut self, chunk: &mut Chunk) {
+        if self.match_token(TokenType::MINUS) {
+            let operator_type = self.previous_token.token_type;
+            self.unary(chunk);
+            match operator_type {
+                TokenType::MINUS => self.emit_byte(chunk, OP_NEGATE),
+                _ => unreachable!(),
+            }
+        } else {
+            self.number(chunk);
         }
-
-        current_token
     }
 
-    /**
-     * Consumes the current token if it is of the given type
-     */
-    pub fn consume(&mut self, token_type: TokenType, message: &str) -> Token {
-        if self.current_token.token_type == token_type {
-            return self.advance();
-        }
-        self.error(self.current_token, message);
-        self.current_token
-    }
 
-    /**
-     * Errors the compiler
-     */
-    pub fn error(&mut self, token: Token, message: &str) {
-        self.had_error = true;
-        self.panic_mode = true;
-        println!("[line {}] Error: {}", token.line, message);
-    }
 
-    /**
-     * Emits a byte to the chunk
-     */
-    pub fn emit_byte(&mut self, chunk: &mut Chunk, byte: u8) {
-        chunk.write(byte, self.current_token.line);
-    }
-
-    /**
-     * Makes a constant instruction
-     */
-    fn make_constant_instruction(&self, index: u8) -> u8 {
-        (index << 2) | OP_CONSTANT
+    fn number(&mut self, chunk: &mut Chunk) {
+        let value = self.previous_token.lexeme(&self.scanner.source).parse::<f64>().unwrap();
+        self.emit_constant(chunk, value);
     }
     
-    /**
-     * Makes a negate instruction
-     */
-    fn make_negate_instruction(&self, index: u8) -> u8 {
-        (index << 2) | OP_NEGATE
+    fn match_token(&mut self, token_type: TokenType) -> bool {
+        if !self.check(token_type) {
+            return false;
+        }
+        self.current_token = self.advance();
+        true
     }
 
+    fn check(&self, token_type: TokenType) -> bool {
+        self.current_token.token_type == token_type
+    }
+
+    pub fn advance(&mut self) -> Token {
+        self.previous_token = self.current_token;
+        loop {
+            let token = self.scanner.scan_token();
+            if token.token_type != TokenType::ERROR {
+                return token;
+            }
+            let error_message = token.lexeme(&self.scanner.source).to_string();
+            self.error(token, &error_message);
+        }
+    }
+
+    pub fn consume(&mut self, token_type: TokenType, message: &str) {
+        if self.current_token.token_type == token_type {
+            self.current_token = self.advance();
+            return;
+        }
+        self.error(self.current_token, message);
+    }
+
+    pub fn error(&mut self, token: Token, message: &str) {
+        if self.panic_mode {
+            return;
+        }
+        self.panic_mode = true;
+        self.had_error = true;
+        eprintln!("[line {}] Error", token.line);
+        if token.token_type == TokenType::EOF {
+            eprintln!(" at end");
+        } else if token.token_type == TokenType::ERROR {
+            // Nothing.
+        } else {
+            eprintln!(" at '{}'", token.lexeme(&self.scanner.source));
+        }
+        eprintln!(": {}", message);
+    }
+
+    pub fn emit_byte(&mut self, chunk: &mut Chunk, byte: u8) {
+        chunk.write(byte, self.previous_token.line);
+    }
+
+    pub fn emit_bytes(&mut self, chunk: &mut Chunk, byte1: u8, byte2: u8) {
+        self.emit_byte(chunk, byte1);
+        self.emit_byte(chunk, byte2);
+    }
+
+    pub fn emit_constant(&mut self, chunk: &mut Chunk, value: f64) {
+        let constant = chunk.add_constant(value);
+        self.emit_bytes(chunk, OP_CONSTANT, constant);
+    }
+
+    pub fn emit_return(&mut self, chunk: &mut Chunk) {
+        self.emit_byte(chunk, OP_RETURN);
+    }
 }

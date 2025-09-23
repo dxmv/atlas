@@ -101,7 +101,9 @@
 ### Phase 15 - Compilling expressions
 - [x] Parse token by token
 - [x] Parse numbers
-- [ ] Parse grouping and unary
+- [x] Parse grouping and unary
+- [ ] Presednce parsing
+- [ ] Parse infix expressions
 - [ ] Pratt parsing
 
 

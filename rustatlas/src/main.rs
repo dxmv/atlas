@@ -26,14 +26,12 @@ fn main() {
         Ok(_) => println!("Read file successfully"),
         Err(e) => panic!("Error reading file: {}", e),
     }
-    let scanner = Scanner::new(source);
 
-    let mut compiler = Compiler::new(scanner);
+    let mut compiler = Compiler::new(source);
     let mut chunk = Chunk::new();
     let success = compiler.compile(&mut chunk);
     if !success {
         println!("Compilation failed");
         return;
     }
-    chunk.print();
 }
