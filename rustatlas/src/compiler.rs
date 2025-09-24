@@ -1,7 +1,9 @@
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, Value, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS};
 use crate::scanner::Scanner;
 use crate::token::Token;
 use crate::token::TokenType;
+use crate::value::{Value, ObjRef, Obj, ObjString};
+use std::rc::Rc;
 
 pub struct Compiler {
     pub previous_token: Token,
@@ -99,6 +101,13 @@ impl Compiler {
             TokenType::Nil => self.emit_byte(OP_NIL),
             _ => unreachable!(),
         }
+    }
+
+    fn string(&mut self) {
+        let value = self.previous_token.lexeme(&self.scanner.source);
+        let obj_string = ObjString{chars: value[1..value.len()-1].to_string().into_boxed_str()};
+        let obj_ref = ObjRef(Rc::new(Obj::String(obj_string)));
+        self.emit_constant(Value::Obj(obj_ref));
     }
 
 
@@ -214,6 +223,7 @@ impl Compiler {
             TokenType::Less => ParseRule::new(None, Some(|c| c.binary()), Precedence::Comparison),
             TokenType::GreaterEqual => ParseRule::new(None, Some(|c| c.binary()), Precedence::Comparison),
             TokenType::LessEqual => ParseRule::new(None, Some(|c| c.binary()), Precedence::Comparison),
+            TokenType::String => ParseRule::new(Some(|c| c.string()), None, Precedence::None),
             _ => ParseRule::new(None, None, Precedence::None),
         }
     }
