@@ -1,6 +1,6 @@
 
 
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, Value, OP_TRUE, OP_FALSE, OP_NIL};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, Value, OP_TRUE, OP_FALSE, OP_NIL, OP_GREATER, OP_LESS};
 
 #[derive(Debug)]
 pub enum InterpretResult {
@@ -46,7 +46,7 @@ impl VM {
                         _ => return InterpretResult::RuntimeError("Expected number".to_string()),
                     }
                 }
-                OP_ADD | OP_SUBTRACT | OP_MULTIPLY | OP_DIVIDE => {
+                OP_ADD | OP_SUBTRACT | OP_MULTIPLY | OP_DIVIDE | OP_GREATER | OP_LESS => {
                     let result = self.handle_binary_operation(opcode);
                 }
                 OP_TRUE => {
@@ -61,6 +61,11 @@ impl VM {
                 OP_NOT => {
                     let constant = self.pop();
                     self.push(Value::Bool(!self.is_truthy(constant)));
+                }
+                OP_EQUAL => {
+                    let b = self.pop();
+                    let a = self.pop();
+                    self.push(Value::Bool(self.is_equal(a, b)));
                 }
                 _ => {
                     return InterpretResult::RuntimeError("Unknown opcode".to_string());
@@ -77,6 +82,8 @@ impl VM {
             OP_SUBTRACT => Value::Number(a - b),
             OP_MULTIPLY => Value::Number(a * b),
             OP_DIVIDE => Value::Number(a / b),
+            OP_GREATER => Value::Bool(a > b),
+            OP_LESS => Value::Bool(a < b),
             _ => return Err(InterpretResult::RuntimeError("Unknown opcode".to_string())),
         };
         self.push(result);
@@ -122,6 +129,18 @@ impl VM {
             Value::Bool(bool) => bool,
             Value::Nil => false,
             _ => true,
+        }
+    }
+
+    /**
+    Check if 2 values are equal
+    */
+    fn is_equal(&self, a: Value, b: Value) -> bool {
+        match (a, b) {
+            (Value::Number(a), Value::Number(b)) => a == b,
+            (Value::Bool(a), Value::Bool(b)) => a == b,
+            (Value::Nil, Value::Nil) => true,
+            _ => false,
         }
     }
 }

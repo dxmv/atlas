@@ -1,4 +1,4 @@
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, Value, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, Value, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS};
 use crate::scanner::Scanner;
 use crate::token::Token;
 use crate::token::TokenType;
@@ -79,6 +79,12 @@ impl Compiler {
             TokenType::Minus => self.emit_byte(OP_SUBTRACT),
             TokenType::Star => self.emit_byte(OP_MULTIPLY),
             TokenType::Slash => self.emit_byte(OP_DIVIDE),
+            TokenType::EqualEqual => self.emit_byte(OP_EQUAL),
+            TokenType::Greater => self.emit_byte(OP_GREATER),
+            TokenType::Less => self.emit_byte(OP_LESS),
+            TokenType::BangEqual => self.emit_bytes(OP_EQUAL, OP_NOT),
+            TokenType::GreaterEqual => self.emit_bytes(OP_GREATER, OP_EQUAL),
+            TokenType::LessEqual => self.emit_bytes(OP_LESS, OP_EQUAL),
             _ => unreachable!(),
         }
     }
@@ -202,6 +208,12 @@ impl Compiler {
             TokenType::False => ParseRule::new(Some(|c| c.literal()), None, Precedence::None),
             TokenType::Nil => ParseRule::new(Some(|c| c.literal()), None, Precedence::None),
             TokenType::Bang => ParseRule::new(Some(|c| c.unary()), None, Precedence::None),
+            TokenType::BangEqual => ParseRule::new(None, Some(|c| c.binary()), Precedence::Equality),
+            TokenType::EqualEqual => ParseRule::new(None, Some(|c| c.binary()), Precedence::Equality),
+            TokenType::Greater => ParseRule::new(None, Some(|c| c.binary()), Precedence::Comparison),
+            TokenType::Less => ParseRule::new(None, Some(|c| c.binary()), Precedence::Comparison),
+            TokenType::GreaterEqual => ParseRule::new(None, Some(|c| c.binary()), Precedence::Comparison),
+            TokenType::LessEqual => ParseRule::new(None, Some(|c| c.binary()), Precedence::Comparison),
             _ => ParseRule::new(None, None, Precedence::None),
         }
     }

@@ -9,6 +9,10 @@ pub const OP_TRUE: u8 = 0x07;
 pub const OP_FALSE: u8 = 0x08;
 pub const OP_NIL: u8 = 0x09;
 pub const OP_NOT: u8 = 0x0A;
+pub const OP_EQUAL: u8 = 0x0B;
+pub const OP_GREATER: u8 = 0x0C;
+pub const OP_LESS: u8 = 0x0D;
+
 
 #[derive(Debug, Copy, Clone)]
 pub enum Value {
@@ -76,6 +80,9 @@ impl Chunk {
                 OP_FALSE => println!("OP_FALSE"),
                 OP_NIL => println!("OP_NIL"),
                 OP_NOT => println!("OP_NOT"),
+                OP_EQUAL => println!("OP_EQUAL"),
+                OP_GREATER => println!("OP_GREATER"),
+                OP_LESS => println!("OP_LESS"),
                 other => println!("Unknown opcode {}", other),
             }
         }
