@@ -198,6 +198,7 @@ impl Compiler {
             TokenType::Slash => ParseRule::new(None, Some(|c| c.binary()), Precedence::Factor),
             TokenType::Star => ParseRule::new(None, Some(|c| c.binary()), Precedence::Factor),
             TokenType::Number => ParseRule::new(Some(|c| c.number()), None, Precedence::None),
+            TokenType::Eof => ParseRule::new(None, None, Precedence::None),
             _ => ParseRule::new(None, None, Precedence::None),
         }
     }

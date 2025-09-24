@@ -41,33 +41,36 @@ impl Chunk {
     }
 
     pub fn disassemble(&self, name: &str) {
-        println!("== {} ==", name);
-        for (offset, code) in self.code.iter().enumerate() {
-            print!("{:04} ", offset);
-            if offset > 0 && self.lines[offset] == self.lines[offset - 1] {
-                print!("   | ");
-            } else {
-                print!("{:<4} ", self.lines[offset]);
-            }
-            
-            let (opcode,value) = disassemble_opcode(*code);
+        println!("==== {} ====", name);
+        let mut offset: usize = 0;
+        while offset < self.code.len() {
+            print!("{:04} | ", offset);
+
+            let line = self.lines[offset];
+            print!("{:04} |", line);
+
+            let opcode = self.code[offset];
+            offset += 1;
             match opcode {
                 OP_RETURN => println!("OP_RETURN"),
                 OP_CONSTANT => {
-                    let constant_index = value;
+                    if offset >= self.code.len() {
+                        println!("OP_CONSTANT <missing operand>");
+                        break;
+                    }
+                    let constant_index = self.code[offset];
+                    offset += 1;
                     let constant_value = self.constants[constant_index as usize];
                     println!("OP_CONSTANT {} '{}'", constant_index, constant_value);
                 }
                 OP_NEGATE => {
-                     let constant_index = value;
-                     let constant_value = - self.constants[constant_index as usize];
-                     println!("OP_NEGATE {} '{}'", constant_index, constant_value);
+                    println!("OP_NEGATE");
                 }
                 OP_ADD => println!("OP_ADD"),
                 OP_SUBTRACT => println!("OP_SUBTRACT"),
                 OP_MULTIPLY => println!("OP_MULTIPLY"),
                 OP_DIVIDE => println!("OP_DIVIDE"),
-                _ => println!("Unknown opcode {}", opcode),
+                other => println!("Unknown opcode {}", other),
             }
         }
     }
