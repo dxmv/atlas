@@ -22,11 +22,10 @@ impl VM {
 
     pub fn interpret(&mut self, source: String) -> InterpretResult {
         let mut compiler = Compiler::new(source);
-        let mut chunk = Chunk::new();
-        if !compiler.compile(&mut chunk) {
+        if !compiler.compile() {
             return InterpretResult::CompileError;
         }
-        self.chunk = chunk;
+        self.chunk = compiler.chunk;
         self.ip = 0;
         self.run()
     }

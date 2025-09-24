@@ -10,7 +10,6 @@ use std::io::prelude::*;
 use std::path::Path;
 
 use compiler::Compiler;
-use chunk::Chunk;
 
 fn main() {
     let path = Path::new("./test.txt");
@@ -27,11 +26,10 @@ fn main() {
     }
 
     let mut compiler = Compiler::new(source);
-    let mut chunk = Chunk::new();
-    let success = compiler.compile(&mut chunk);
+    let success = compiler.compile();
     if !success {
         println!("Compilation failed");
         return;
     }
-    chunk.disassemble("chunk");
+    compiler.chunk.disassemble("chunk");
 }
