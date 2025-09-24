@@ -93,6 +93,9 @@
 - [x] Add support for true, false and nil values in both compiler and vm
 - [x] Add support for '!', NOT operator
 - [x] Add support for equality operators
+- [x] Add object to the Value type and strings to the object
+- [x] Strings in compiler
+- [x] Operations on Strings
 
 
 

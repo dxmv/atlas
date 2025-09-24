@@ -1,7 +1,7 @@
 
 
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_GREATER, OP_LESS};
-use crate::value::Value;
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS};
+use crate::value::{Value, ObjRef, Obj, ObjString};
 
 #[derive(Debug)]
 pub enum InterpretResult {
@@ -47,7 +47,11 @@ impl VM {
                         _ => return InterpretResult::RuntimeError("Expected number".to_string()),
                     }
                 }
-                OP_ADD | OP_SUBTRACT | OP_MULTIPLY | OP_DIVIDE | OP_GREATER | OP_LESS => {
+                OP_ADD => {
+                    let result = self.handle_add_operation(opcode);
+                    
+                }
+                OP_SUBTRACT | OP_MULTIPLY | OP_DIVIDE | OP_GREATER | OP_LESS => {
                     let result = self.handle_binary_operation(opcode);
                 }
                 OP_TRUE => {
@@ -73,6 +77,27 @@ impl VM {
                 }
             }
         }
+    }
+
+    fn handle_add_operation(&mut self, _opcode: u8) -> Result<(), InterpretResult> {
+        let b = self.pop();
+        let a = self.pop();
+        let result = match (a, b) {
+            (Value::Number(a), Value::Number(b)) => Value::Number(a + b),
+            (Value::Obj(a), Value::Obj(b)) => match (a.0.as_ref(), b.0.as_ref()) {
+                (Obj::String(sa), Obj::String(sb)) => {
+                    let mut s = String::with_capacity(sa.chars.len() + sb.chars.len());
+                    s.push_str(&sa.chars);
+                    s.push_str(&sb.chars);
+                    let obj = Obj::String(ObjString { chars: s.into_boxed_str() });
+                    Value::Obj(ObjRef(std::rc::Rc::new(obj)))
+                }
+                _ => return Err(InterpretResult::RuntimeError("Operands must be two strings or two numbers".to_string())),
+            },
+            _ => return Err(InterpretResult::RuntimeError("Operands must be two strings or two numbers".to_string())),
+        };
+        self.push(result);
+        Ok(())
     }
 
     fn handle_binary_operation(&mut self, opcode: u8) -> Result<(), InterpretResult> {
@@ -140,6 +165,7 @@ impl VM {
         match (a, b) {
             (Value::Number(a), Value::Number(b)) => a == b,
             (Value::Bool(a), Value::Bool(b)) => a == b,
+            (Value::Obj(a), Value::Obj(b)) => a == b,
             (Value::Nil, Value::Nil) => true,
             _ => false,
         }

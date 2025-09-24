@@ -8,15 +8,17 @@ pub enum Value {
     Obj(ObjRef),
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ObjRef(pub Rc<Obj>);
 
-#[derive(Debug)]
+
+#[derive(Debug, Eq, PartialEq)]
 pub enum Obj {
     String(ObjString),
 }
 
-#[derive(Debug)]
+
+#[derive(Debug, Eq, PartialEq)]
 pub struct ObjString {
     pub chars: Box<str>,
 }
