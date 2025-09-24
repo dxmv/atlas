@@ -1,4 +1,4 @@
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, Value};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, Value, OP_TRUE, OP_FALSE, OP_NIL};
 use crate::scanner::Scanner;
 use crate::token::Token;
 use crate::token::TokenType;
@@ -78,6 +78,18 @@ impl Compiler {
             TokenType::Minus => self.emit_byte(OP_SUBTRACT),
             TokenType::Star => self.emit_byte(OP_MULTIPLY),
             TokenType::Slash => self.emit_byte(OP_DIVIDE),
+            _ => unreachable!(),
+        }
+    }
+
+    /**
+    Emits a literal to the chunk
+    */
+    fn literal(&mut self) {
+        match self.previous_token.token_type {
+            TokenType::True => self.emit_byte(OP_TRUE),
+            TokenType::False => self.emit_byte(OP_FALSE),
+            TokenType::Nil => self.emit_byte(OP_NIL),
             _ => unreachable!(),
         }
     }
@@ -199,6 +211,9 @@ impl Compiler {
             TokenType::Star => ParseRule::new(None, Some(|c| c.binary()), Precedence::Factor),
             TokenType::Number => ParseRule::new(Some(|c| c.number()), None, Precedence::None),
             TokenType::Eof => ParseRule::new(None, None, Precedence::None),
+            TokenType::True => ParseRule::new(Some(|c| c.literal()), None, Precedence::None),
+            TokenType::False => ParseRule::new(Some(|c| c.literal()), None, Precedence::None),
+            TokenType::Nil => ParseRule::new(Some(|c| c.literal()), None, Precedence::None),
             _ => ParseRule::new(None, None, Precedence::None),
         }
     }

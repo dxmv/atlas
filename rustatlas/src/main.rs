@@ -10,7 +10,7 @@ use std::io::prelude::*;
 use std::path::Path;
 
 use compiler::Compiler;
-use vm::VM;
+use vm::{VM, InterpretResult};
 
 fn main() {
     let path = Path::new("./test.txt");
@@ -35,5 +35,6 @@ fn main() {
     compiler.chunk.disassemble("chunk");
     let mut vm = VM::new();
     vm.chunk = compiler.chunk;
-    vm.run();
+    let result = vm.run();
+    println!("result: {:?}", result);
 }

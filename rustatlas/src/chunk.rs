@@ -5,6 +5,9 @@ pub const OP_ADD: u8 = 0x03;
 pub const OP_SUBTRACT: u8 = 0x04;
 pub const OP_MULTIPLY: u8 = 0x05;
 pub const OP_DIVIDE: u8 = 0x06;
+pub const OP_TRUE: u8 = 0x07;
+pub const OP_FALSE: u8 = 0x08;
+pub const OP_NIL: u8 = 0x09;
 
 #[derive(Debug, Copy, Clone)]
 pub enum Value {
@@ -75,6 +78,9 @@ impl Chunk {
                 OP_SUBTRACT => println!("OP_SUBTRACT"),
                 OP_MULTIPLY => println!("OP_MULTIPLY"),
                 OP_DIVIDE => println!("OP_DIVIDE"),
+                OP_TRUE => println!("OP_TRUE"),
+                OP_FALSE => println!("OP_FALSE"),
+                OP_NIL => println!("OP_NIL"),
                 other => println!("Unknown opcode {}", other),
             }
         }

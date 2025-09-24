@@ -1,9 +1,10 @@
 
 
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, disassemble_opcode, Value};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, Value, OP_TRUE, OP_FALSE, OP_NIL};
 
+#[derive(Debug)]
 pub enum InterpretResult {
-    Ok,
+    Ok(Value),
     CompileError,
     RuntimeError,
 }
@@ -24,22 +25,23 @@ impl VM {
     */
     pub fn run(&mut self) -> InterpretResult {
         loop {
-            let instruction = self.chunk.code[self.ip];
+            let opcode = self.chunk.code[self.ip];
             self.ip += 1;
-            let (opcode, value) = disassemble_opcode(instruction);
 
             match opcode {
                 OP_RETURN => {
                     let value = self.pop();
-                    return InterpretResult::Ok;
+                    return InterpretResult::Ok(value);
                 }
                 OP_CONSTANT => {
-                    let constant_index = value;
+                    let constant_index = self.chunk.code[self.ip];
+                    self.ip += 1;
                     let constant = self.chunk.constants[constant_index as usize];
                     self.push(constant);
                 }
                 OP_NEGATE => {
-                    let constant_index = value;
+                    let constant_index = self.chunk.code[self.ip];
+                    self.ip += 1;
                     let constant = self.chunk.constants[constant_index as usize];
                     match constant {
                         Value::Number(number) => self.push(Value::Number(-number)),
@@ -47,7 +49,16 @@ impl VM {
                     }
                 }
                 OP_ADD | OP_SUBTRACT | OP_MULTIPLY | OP_DIVIDE => {
-                    self.handle_binary_operation(opcode);
+                    let result = self.handle_binary_operation(opcode);
+                }
+                OP_TRUE => {
+                    self.push(Value::Bool(true));
+                }
+                OP_FALSE => {
+                    self.push(Value::Bool(false));
+                }
+                OP_NIL => {
+                    self.push(Value::Nil);
                 }
                 _ => {
                     return InterpretResult::RuntimeError;
