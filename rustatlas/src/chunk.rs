@@ -6,7 +6,12 @@ pub const OP_SUBTRACT: u8 = 0x04;
 pub const OP_MULTIPLY: u8 = 0x05;
 pub const OP_DIVIDE: u8 = 0x06;
 
-pub type Value = f64;
+#[derive(Debug, Copy, Clone)]
+pub enum Value {
+    Bool(bool),
+    Nil,
+    Number(f64),
+}
 
 // Utility functions for bytecode manipulation
 pub fn disassemble_opcode(byte: u8) -> (u8,u8) {
@@ -61,7 +66,7 @@ impl Chunk {
                     let constant_index = self.code[offset];
                     offset += 1;
                     let constant_value = self.constants[constant_index as usize];
-                    println!("OP_CONSTANT {} '{}'", constant_index, constant_value);
+                    println!("OP_CONSTANT {} {:?}", constant_index, constant_value);
                 }
                 OP_NEGATE => {
                     println!("OP_NEGATE");

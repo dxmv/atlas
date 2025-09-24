@@ -1,4 +1,4 @@
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, Value};
 use crate::scanner::Scanner;
 use crate::token::Token;
 use crate::token::TokenType;
@@ -86,7 +86,7 @@ impl Compiler {
 
     fn number(&mut self) {
         let value = self.previous_token.lexeme(&self.scanner.source).parse::<f64>().unwrap();
-        self.emit_constant(value);
+        self.emit_constant(Value::Number(value));
     }
     
     fn match_token(&mut self, token_type: TokenType) -> bool {
@@ -151,7 +151,7 @@ impl Compiler {
     /**
     Emits a constant to the chunk
     */
-    pub fn emit_constant(&mut self, value: f64) {
+    pub fn emit_constant(&mut self, value: Value) {
         let constant = self.chunk.add_constant(value);
         self.emit_bytes(OP_CONSTANT, constant);
     }

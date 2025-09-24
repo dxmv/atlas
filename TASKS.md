@@ -84,7 +84,11 @@
 - [x] Identifiers
 - [x] Keywords
 - [x] spaces, new lines etc.
-- [ ] Parse token by token
+- [x] Parse token by token
+
+# 24.09.2025
+- [x] Fix dissasemble
+- [x] Modify the Value type so it supports bool, nils and numbers
 
 
 

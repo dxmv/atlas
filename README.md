@@ -106,5 +106,9 @@
 - [x] Parse infix expressions
 - [x] Pratt parsing
 
+### Phase 16 - Types of Values
+- [x] Modify the Value type so it supports bool, nils and numbers
+- [ ] Correct the value usage in compiler and vm
+
 
 
