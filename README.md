@@ -108,7 +108,10 @@
 
 ### Phase 16 - Types of Values
 - [x] Modify the Value type so it supports bool, nils and numbers
-- [ ] Correct the value usage in compiler and vm
+- [x] Correct the Value type usage in compiler and vm
+- [x] Add support for true, false and nil values in both compiler and vm
+- [x] Add support for '!', NOT operator
+- [ ] Add support for equality operators
 
 
 

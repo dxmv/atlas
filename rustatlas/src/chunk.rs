@@ -8,19 +8,13 @@ pub const OP_DIVIDE: u8 = 0x06;
 pub const OP_TRUE: u8 = 0x07;
 pub const OP_FALSE: u8 = 0x08;
 pub const OP_NIL: u8 = 0x09;
+pub const OP_NOT: u8 = 0x0A;
 
 #[derive(Debug, Copy, Clone)]
 pub enum Value {
     Bool(bool),
     Nil,
     Number(f64),
-}
-
-// Utility functions for bytecode manipulation
-pub fn disassemble_opcode(byte: u8) -> (u8,u8) {
-    let opcode = byte & 0x03;
-    let value = byte >> 2;
-    (opcode,value)
 }
 
 pub struct Chunk {
@@ -81,6 +75,7 @@ impl Chunk {
                 OP_TRUE => println!("OP_TRUE"),
                 OP_FALSE => println!("OP_FALSE"),
                 OP_NIL => println!("OP_NIL"),
+                OP_NOT => println!("OP_NOT"),
                 other => println!("Unknown opcode {}", other),
             }
         }

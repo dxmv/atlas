@@ -1,4 +1,4 @@
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, Value, OP_TRUE, OP_FALSE, OP_NIL};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, Value, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT};
 use crate::scanner::Scanner;
 use crate::token::Token;
 use crate::token::TokenType;
@@ -27,7 +27,7 @@ impl Compiler {
     pub fn compile(&mut self) -> bool {
         self.advance();
         self.expression();
-        self.emit_return();
+        self.emit_byte(OP_RETURN);
         !self.had_error
     }
 
@@ -64,7 +64,8 @@ impl Compiler {
         let operator_type = self.previous_token.token_type;
         self.parse_precedence(Precedence::Unary);
         match operator_type {
-            TokenType::Minus => self.emit_negate(),
+            TokenType::Minus => self.emit_byte(OP_NEGATE),
+            TokenType::Bang => self.emit_byte(OP_NOT),
             _ => unreachable!(),
         }
     }
@@ -169,20 +170,6 @@ impl Compiler {
     }
 
     /**
-    Emits a return to the chunk
-    */
-    pub fn emit_return(&mut self) {
-        self.emit_byte(OP_RETURN);
-    }
-
-    /**
-    Emit a negate to the chunk
-    */
-    pub fn emit_negate(&mut self) {
-        self.emit_byte(OP_NEGATE);
-    }
-
-    /**
     Parses the precedence
     */
     pub fn parse_precedence(&mut self, precedence: Precedence) {
@@ -214,6 +201,7 @@ impl Compiler {
             TokenType::True => ParseRule::new(Some(|c| c.literal()), None, Precedence::None),
             TokenType::False => ParseRule::new(Some(|c| c.literal()), None, Precedence::None),
             TokenType::Nil => ParseRule::new(Some(|c| c.literal()), None, Precedence::None),
+            TokenType::Bang => ParseRule::new(Some(|c| c.unary()), None, Precedence::None),
             _ => ParseRule::new(None, None, Precedence::None),
         }
     }

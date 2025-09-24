@@ -6,7 +6,7 @@ use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT
 pub enum InterpretResult {
     Ok(Value),
     CompileError,
-    RuntimeError,
+    RuntimeError(String),
 }
 
 pub struct VM {
@@ -40,12 +40,10 @@ impl VM {
                     self.push(constant);
                 }
                 OP_NEGATE => {
-                    let constant_index = self.chunk.code[self.ip];
-                    self.ip += 1;
-                    let constant = self.chunk.constants[constant_index as usize];
+                    let constant = self.pop();
                     match constant {
                         Value::Number(number) => self.push(Value::Number(-number)),
-                        _ => return InterpretResult::RuntimeError,
+                        _ => return InterpretResult::RuntimeError("Expected number".to_string()),
                     }
                 }
                 OP_ADD | OP_SUBTRACT | OP_MULTIPLY | OP_DIVIDE => {
@@ -60,8 +58,12 @@ impl VM {
                 OP_NIL => {
                     self.push(Value::Nil);
                 }
+                OP_NOT => {
+                    let constant = self.pop();
+                    self.push(Value::Bool(!self.is_truthy(constant)));
+                }
                 _ => {
-                    return InterpretResult::RuntimeError;
+                    return InterpretResult::RuntimeError("Unknown opcode".to_string());
                 }
             }
         }
@@ -75,7 +77,7 @@ impl VM {
             OP_SUBTRACT => Value::Number(a - b),
             OP_MULTIPLY => Value::Number(a * b),
             OP_DIVIDE => Value::Number(a / b),
-            _ => return Err(InterpretResult::RuntimeError),
+            _ => return Err(InterpretResult::RuntimeError("Unknown opcode".to_string())),
         };
         self.push(result);
         Ok(())
@@ -105,7 +107,21 @@ impl VM {
         let value = self.pop();
         match value {
             Value::Number(number) => Ok(number),
-            _ => Err(InterpretResult::RuntimeError),
+            _ => Err(InterpretResult::RuntimeError("Expected number".to_string())),
+        }
+    }
+
+    /**
+     The false values are:
+     - false
+     - nil
+     Everything else is true
+    */
+    fn is_truthy(&self, value: Value) -> bool {
+        match value {
+            Value::Bool(bool) => bool,
+            Value::Nil => false,
+            _ => true,
         }
     }
 }
