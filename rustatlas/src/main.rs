@@ -3,6 +3,7 @@ mod vm;
 mod scanner;
 mod token;
 mod compiler;
+mod value;
 
 // file stuff
 use std::fs::File;

@@ -1,6 +1,7 @@
 
 
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, Value, OP_TRUE, OP_FALSE, OP_NIL, OP_GREATER, OP_LESS};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_GREATER, OP_LESS};
+use crate::value::Value;
 
 #[derive(Debug)]
 pub enum InterpretResult {
@@ -36,7 +37,7 @@ impl VM {
                 OP_CONSTANT => {
                     let constant_index = self.chunk.code[self.ip];
                     self.ip += 1;
-                    let constant = self.chunk.constants[constant_index as usize];
+                    let constant = self.chunk.constants[constant_index as usize].clone();
                     self.push(constant);
                 }
                 OP_NEGATE => {

@@ -1,3 +1,4 @@
+use crate::value::Value;
 pub const OP_RETURN: u8 = 0x00;
 pub const OP_CONSTANT: u8 = 0x01;
 pub const OP_NEGATE: u8 = 0x02;
@@ -14,12 +15,7 @@ pub const OP_GREATER: u8 = 0x0C;
 pub const OP_LESS: u8 = 0x0D;
 
 
-#[derive(Debug, Copy, Clone)]
-pub enum Value {
-    Bool(bool),
-    Nil,
-    Number(f64),
-}
+// Value and object types moved to value.rs. Use them via crate::value.
 
 pub struct Chunk {
     pub code: Vec<u8>,
@@ -66,7 +62,7 @@ impl Chunk {
                     }
                     let constant_index = self.code[offset];
                     offset += 1;
-                    let constant_value = self.constants[constant_index as usize];
+                    let constant_value = self.constants[constant_index as usize].clone();
                     println!("OP_CONSTANT {} {:?}", constant_index, constant_value);
                 }
                 OP_NEGATE => {
