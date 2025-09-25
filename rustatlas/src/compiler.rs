@@ -1,4 +1,4 @@
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_PRINT, OP_POP, OP_DEFINE_GLOBAL};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_PRINT, OP_POP, OP_DEFINE_GLOBAL, OP_GET_GLOBAL};
 use crate::scanner::Scanner;
 use crate::token::Token;
 use crate::token::TokenType;
@@ -60,7 +60,7 @@ impl Compiler {
     }
 
     fn var_declaration(&mut self) {
-        let indx = self.parse_variable("Expected variable name.");
+        self.parse_variable("Expected variable name.");
         if self.match_token(TokenType::Equal) {
             self.expression();
         }
@@ -68,7 +68,7 @@ impl Compiler {
             self.emit_byte(OP_NIL);
         }
         self.consume(TokenType::Semicolon, "Expected ';' after variable declaration.");
-        self.emit_bytes(OP_DEFINE_GLOBAL, indx);
+        self.emit_byte(OP_DEFINE_GLOBAL);
     }
 
     /**
@@ -76,6 +76,10 @@ impl Compiler {
     */
     fn parse_variable(&mut self, message: &str) -> u8 {
         self.consume(TokenType::Identifier, message);
+        self.identifier_constant()
+    }
+
+    fn identifier_constant(&mut self) -> u8 {
         let lexeme = self.previous_token.lexeme(&self.scanner.source);
         let obj_ref = self.chunk.intern_string(&lexeme);
         let constant = self.emit_constant(Value::Obj(obj_ref));
@@ -144,6 +148,11 @@ impl Compiler {
             TokenType::LessEqual => self.emit_bytes(OP_LESS, OP_EQUAL),
             _ => unreachable!(),
         }
+    }
+
+    fn variable(&mut self) {
+        self.identifier_constant();
+        self.emit_byte(OP_GET_GLOBAL);
     }
 
     /**
@@ -281,6 +290,7 @@ impl Compiler {
             TokenType::GreaterEqual => ParseRule::new(None, Some(|c| c.binary()), Precedence::Comparison),
             TokenType::LessEqual => ParseRule::new(None, Some(|c| c.binary()), Precedence::Comparison),
             TokenType::String => ParseRule::new(Some(|c| c.string()), None, Precedence::None),
+            TokenType::Identifier => ParseRule::new(Some(|c| c.variable()), None, Precedence::None),
             _ => ParseRule::new(None, None, Precedence::None),
         }
     }

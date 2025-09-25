@@ -124,9 +124,9 @@
 - [x] Opeartions on Strings faster
 
 ### Phase 19 - Global Variables
-- [ ] Statements
-- [ ] Varaible declarations
-- [ ] Reading varaibles
+- [x] Print & Expression statement
+- [x] Varaible declarations
+- [x] Reading varaibles
 - [ ] Assignment
 
 
