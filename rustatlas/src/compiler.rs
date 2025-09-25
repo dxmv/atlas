@@ -1,4 +1,4 @@
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_PRINT, OP_POP, OP_DEFINE_GLOBAL, OP_GET_GLOBAL};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_PRINT, OP_POP, OP_DEFINE_GLOBAL, OP_GET_GLOBAL, OP_SET_GLOBAL};
 use crate::scanner::Scanner;
 use crate::token::Token;
 use crate::token::TokenType;
@@ -152,7 +152,13 @@ impl Compiler {
 
     fn variable(&mut self) {
         self.identifier_constant();
-        self.emit_byte(OP_GET_GLOBAL);
+        if self.match_token(TokenType::Equal) {
+            self.expression();
+            self.emit_byte(OP_SET_GLOBAL);
+        }
+        else{
+            self.emit_byte(OP_GET_GLOBAL);
+        }
     }
 
     /**

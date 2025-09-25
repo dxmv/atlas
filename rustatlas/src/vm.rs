@@ -1,6 +1,6 @@
 
 
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_POP, OP_PRINT, OP_DEFINE_GLOBAL, OP_GET_GLOBAL};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_POP, OP_PRINT, OP_DEFINE_GLOBAL, OP_GET_GLOBAL, OP_SET_GLOBAL};
 use crate::value::{Value, ObjRef, Obj, ObjString};
 use std::collections::HashMap;
 
@@ -105,6 +105,20 @@ impl VM {
                         None => return InterpretResult::RuntimeError("Undefined variable".to_string()),
                     };
                     self.push(value);
+                }
+                OP_SET_GLOBAL => {
+                    let value = self.pop();
+                    let key = match self.stack.last().unwrap() {
+                        Value::Obj(obj) => match obj.0.as_ref() {
+                            Obj::String(string) => string.chars.clone(), 
+                            _ => return InterpretResult::RuntimeError("Expected string".to_string()),
+                        },
+                        _ => return InterpretResult::RuntimeError("Expected string".to_string()),
+                    };
+                    if !self.globals.contains_key(&key) {
+                        return InterpretResult::RuntimeError("Undefined variable".to_string());
+                    }
+                    self.globals.insert(key, value);
                 }
                 _ => {
                     return InterpretResult::RuntimeError("Unknown opcode".to_string());
