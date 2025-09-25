@@ -1,1 +1,1 @@
-"asd" == "ads"
+print 1+2;

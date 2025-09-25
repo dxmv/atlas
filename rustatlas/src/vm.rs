@@ -1,6 +1,6 @@
 
 
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_POP, OP_PRINT};
 use crate::value::{Value, ObjRef, Obj, ObjString};
 
 #[derive(Debug)]
@@ -31,8 +31,7 @@ impl VM {
 
             match opcode {
                 OP_RETURN => {
-                    let value = self.pop();
-                    return InterpretResult::Ok(value);
+                    return InterpretResult::Ok(Value::Nil);
                 }
                 OP_CONSTANT => {
                     let constant_index = self.chunk.code[self.ip];
@@ -71,6 +70,14 @@ impl VM {
                     let b = self.pop();
                     let a = self.pop();
                     self.push(Value::Bool(self.is_equal(a, b)));
+                }
+                OP_PRINT => {
+                    let value = self.pop();
+                    self.print_value(value);
+                    println!("");
+                }
+                OP_POP => {
+                    self.pop();
                 }
                 _ => {
                     return InterpretResult::RuntimeError("Unknown opcode".to_string());
@@ -168,6 +175,16 @@ impl VM {
             (Value::Obj(a), Value::Obj(b)) => a == b,
             (Value::Nil, Value::Nil) => true,
             _ => false,
+        }
+    }
+
+    fn print_value(&self, value: Value) {
+        match value {
+            Value::Number(number) => print!("{}", number),
+            Value::Bool(bool) => print!("{}", bool),
+            Value::Nil => print!("nil"),
+            Value::Obj(obj) => print!("{:#?}", obj),
+            _ => print!("{:#?}", value),
         }
     }
 }

@@ -1,4 +1,4 @@
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_PRINT, OP_POP};
 use crate::scanner::Scanner;
 use crate::token::Token;
 use crate::token::TokenType;
@@ -28,7 +28,9 @@ impl Compiler {
 
     pub fn compile(&mut self) -> bool {
         self.advance();
-        self.expression();
+        while !self.match_token(TokenType::Eof) {
+            self.declaration();
+        }
         self.emit_byte(OP_RETURN);
         !self.had_error
     }
@@ -46,6 +48,31 @@ impl Compiler {
             let error_message = self.current_token.lexeme(&self.scanner.source).to_string();
             self.error(self.current_token, &error_message);
         }
+    }
+
+    fn declaration(&mut self) {
+        self.statement();
+    }
+
+    fn statement(&mut self) {
+        if self.match_token(TokenType::Print) {
+            self.print_statement();
+        }
+        else{
+            self.expression_statement();
+        }
+    }
+
+    fn print_statement(&mut self) {
+        self.expression();
+        self.consume(TokenType::Semicolon, "Expected ';' after value.");
+        self.emit_byte(OP_PRINT);
+    }
+
+    fn expression_statement(&mut self) {
+        self.expression();
+        self.consume(TokenType::Semicolon, "Expected ';' after expression.");
+        self.emit_byte(OP_POP);
     }
 
     /**

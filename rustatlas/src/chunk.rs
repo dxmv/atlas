@@ -17,6 +17,8 @@ pub const OP_NOT: u8 = 0x0A;
 pub const OP_EQUAL: u8 = 0x0B;
 pub const OP_GREATER: u8 = 0x0C;
 pub const OP_LESS: u8 = 0x0D;
+pub const OP_PRINT: u8 = 0x0E;
+pub const OP_POP: u8 = 0x0F;
 
 
 
@@ -84,6 +86,8 @@ impl Chunk {
                 OP_EQUAL => println!("OP_EQUAL"),
                 OP_GREATER => println!("OP_GREATER"),
                 OP_LESS => println!("OP_LESS"),
+                OP_PRINT => println!("OP_PRINT"),
+                OP_POP => println!("OP_POP"),
                 other => println!("Unknown opcode {}", other),
             }
         }
