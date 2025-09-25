@@ -1,4 +1,8 @@
-use crate::value::Value;
+use crate::value::{Value, ObjString, ObjRef, Obj};
+use std::rc::Rc;
+use std::collections::HashMap;
+
+// opcodes
 pub const OP_RETURN: u8 = 0x00;
 pub const OP_CONSTANT: u8 = 0x01;
 pub const OP_NEGATE: u8 = 0x02;
@@ -15,11 +19,11 @@ pub const OP_GREATER: u8 = 0x0C;
 pub const OP_LESS: u8 = 0x0D;
 
 
-// Value and object types moved to value.rs. Use them via crate::value.
 
 pub struct Chunk {
     pub code: Vec<u8>,
     pub constants: Vec<Value>,
+    pub interned_strings: HashMap<String, ObjRef>,
     lines: Vec<usize>,
 }
 
@@ -29,6 +33,7 @@ impl Chunk {
             code: vec![],
             constants:vec![],
             lines:vec![], 
+            interned_strings: HashMap::new(),
         }
     }
 
@@ -82,6 +87,16 @@ impl Chunk {
                 other => println!("Unknown opcode {}", other),
             }
         }
+    }
+
+    pub fn intern_string(&mut self, string:&str) -> ObjRef {
+        if let Some(obj_ref) = self.interned_strings.get(string) {
+            return obj_ref.clone();
+        }
+        let obj_string = ObjString{chars: string.to_string().into_boxed_str()};
+        let obj_ref = ObjRef(Rc::new(Obj::String(obj_string)));
+        self.interned_strings.insert(string.to_string(), obj_ref.clone());
+        obj_ref
     }
 }
 

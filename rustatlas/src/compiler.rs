@@ -2,7 +2,7 @@ use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY
 use crate::scanner::Scanner;
 use crate::token::Token;
 use crate::token::TokenType;
-use crate::value::{Value, ObjRef, Obj, ObjString};
+use crate::value::{Value, ObjRef, Obj};
 use std::rc::Rc;
 
 pub struct Compiler {
@@ -104,9 +104,10 @@ impl Compiler {
     }
 
     fn string(&mut self) {
-        let value = self.previous_token.lexeme(&self.scanner.source);
-        let obj_string = ObjString{chars: value[1..value.len()-1].to_string().into_boxed_str()};
-        let obj_ref = ObjRef(Rc::new(Obj::String(obj_string)));
+        let lexeme = self.previous_token.lexeme(&self.scanner.source);
+        let value = &lexeme[1..lexeme.len()-1];
+
+        let obj_ref = self.chunk.intern_string(value);
         self.emit_constant(Value::Obj(obj_ref));
     }
 

@@ -118,6 +118,17 @@
 - [x] Strings in compiler
 - [x] Operations on Strings
 
+### Phase 18 - Hash Tables
+- [x] Add interning to chunk
+- [x] When we encounter a string in compiler intern it
+- [x] Opeartions on Strings faster
+
+### Phase 19 - Global Variables
+- [ ] Statements
+- [ ] Varaible declarations
+- [ ] Reading varaibles
+- [ ] Assignment
+
 
 
 

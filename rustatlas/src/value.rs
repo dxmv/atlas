@@ -8,8 +8,13 @@ pub enum Value {
     Obj(ObjRef),
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct ObjRef(pub Rc<Obj>);
+impl PartialEq for ObjRef {
+    fn eq(&self, other: &Self) -> bool {
+        Rc::ptr_eq(&self.0, &other.0)
+    }
+}
 
 
 #[derive(Debug, Eq, PartialEq)]

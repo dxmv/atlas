@@ -89,8 +89,8 @@ impl VM {
                     let mut s = String::with_capacity(sa.chars.len() + sb.chars.len());
                     s.push_str(&sa.chars);
                     s.push_str(&sb.chars);
-                    let obj = Obj::String(ObjString { chars: s.into_boxed_str() });
-                    Value::Obj(ObjRef(std::rc::Rc::new(obj)))
+                    let obj_ref = self.chunk.intern_string(&s);
+                    Value::Obj(obj_ref)
                 }
                 _ => return Err(InterpretResult::RuntimeError("Operands must be two strings or two numbers".to_string())),
             },
