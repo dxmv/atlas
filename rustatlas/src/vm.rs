@@ -1,7 +1,8 @@
 
 
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_POP, OP_PRINT};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_POP, OP_PRINT, OP_DEFINE_GLOBAL};
 use crate::value::{Value, ObjRef, Obj, ObjString};
+use std::collections::HashMap;
 
 #[derive(Debug)]
 pub enum InterpretResult {
@@ -14,11 +15,12 @@ pub struct VM {
     pub chunk: Chunk,
     pub stack: Vec<Value>,
     ip: usize,
+    globals: HashMap<Box<str>, Value>,
 }
 
 impl VM {
     pub fn new() -> Self {
-        VM { chunk: Chunk::new(), ip: 0, stack: vec![] }
+        VM { chunk: Chunk::new(), ip: 0, stack: vec![], globals: HashMap::new() }
     }
 
     /**
@@ -78,6 +80,17 @@ impl VM {
                 }
                 OP_POP => {
                     self.pop();
+                }
+                OP_DEFINE_GLOBAL => {
+                    let value = self.pop(); // value to be assigned
+                    let key = match self.pop() {
+                        Value::Obj(obj) => match obj.0.as_ref() {
+                            Obj::String(string) => string.chars.clone(), 
+                            _ => return InterpretResult::RuntimeError("Expected string".to_string()),
+                        },
+                        _ => return InterpretResult::RuntimeError("Expected string".to_string()),
+                    };
+                    self.globals.insert(key, value);
                 }
                 _ => {
                     return InterpretResult::RuntimeError("Unknown opcode".to_string());

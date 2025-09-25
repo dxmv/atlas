@@ -19,6 +19,7 @@ pub const OP_GREATER: u8 = 0x0C;
 pub const OP_LESS: u8 = 0x0D;
 pub const OP_PRINT: u8 = 0x0E;
 pub const OP_POP: u8 = 0x0F;
+pub const OP_DEFINE_GLOBAL: u8 = 0x10;
 
 
 
@@ -88,6 +89,7 @@ impl Chunk {
                 OP_LESS => println!("OP_LESS"),
                 OP_PRINT => println!("OP_PRINT"),
                 OP_POP => println!("OP_POP"),
+                OP_DEFINE_GLOBAL => println!("OP_DEFINE_GLOBAL"),
                 other => println!("Unknown opcode {}", other),
             }
         }
