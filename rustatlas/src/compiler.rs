@@ -99,6 +99,9 @@ impl Compiler {
         if self.match_token(TokenType::Print) {
             self.print_statement();
         }
+        else if self.match_token(TokenType::LeftBrace) {
+            self.block();
+        }
         else{
             self.expression_statement();
         }
@@ -114,6 +117,15 @@ impl Compiler {
         self.expression();
         self.consume(TokenType::Semicolon, "Expected ';' after expression.");
         self.emit_byte(OP_POP);
+    }
+
+    fn block(&mut self) {
+        self.scope_depth += 1;
+        while !self.check(TokenType::RightBrace) && !self.check(TokenType::Eof) {
+            self.declaration();
+        }
+        self.consume(TokenType::RightBrace, "Expected '}' after block.");
+        self.scope_depth -= 1;
     }
 
     /**
