@@ -133,7 +133,7 @@
 - [x] Representing local variables in compiler
 - [x] Block statments
 - [x] Declaring local variables
-- [ ] Using locals
+- [x] Using locals
 
 ### Phase 21 - Jumps
 

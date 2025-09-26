@@ -1,6 +1,6 @@
 
 
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_POP, OP_PRINT, OP_DEFINE_GLOBAL, OP_GET_GLOBAL, OP_SET_GLOBAL};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_POP, OP_PRINT, OP_DEFINE_GLOBAL, OP_GET_GLOBAL, OP_SET_GLOBAL, OP_GET_LOCAL, OP_SET_LOCAL};
 use crate::value::{Value, ObjRef, Obj, ObjString};
 use std::collections::HashMap;
 
@@ -119,6 +119,18 @@ impl VM {
                         return InterpretResult::RuntimeError("Undefined variable".to_string());
                     }
                     self.globals.insert(key, value);
+                }
+                OP_GET_LOCAL => {
+                    let slot = self.chunk.code[self.ip];
+                    self.ip += 1;
+                    let value = self.stack[slot as usize].clone();
+                    self.push(value);
+                }
+                OP_SET_LOCAL => {
+                    let slot = self.chunk.code[self.ip];
+                    self.ip += 1;
+                    let value = self.pop();
+                    self.stack[slot as usize] = value;
                 }
                 _ => {
                     return InterpretResult::RuntimeError("Unknown opcode".to_string());

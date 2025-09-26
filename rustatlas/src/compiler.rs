@@ -1,4 +1,7 @@
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_PRINT, OP_POP, OP_DEFINE_GLOBAL, OP_GET_GLOBAL, OP_SET_GLOBAL};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, 
+    OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, 
+    OP_EQUAL, OP_GREATER, OP_LESS, OP_PRINT, OP_POP, OP_DEFINE_GLOBAL, 
+    OP_GET_GLOBAL, OP_SET_GLOBAL, OP_GET_LOCAL, OP_SET_LOCAL};
 use crate::scanner::Scanner;
 use crate::token::{Token, token_equals, TokenType};
 use crate::value::{Value, ObjRef, Obj};
@@ -7,6 +10,7 @@ use std::rc::Rc;
 pub struct Local {
     pub name: Token,
     pub depth: usize,
+    pub initialized: bool,
 }
 
 pub struct Compiler {
@@ -77,7 +81,11 @@ impl Compiler {
         }
         self.consume(TokenType::Semicolon, "Expected ';' after variable declaration.");
         // don't define a global variable if we are in a local scope
-        if self.scope_depth > 0 { return; }
+        if self.scope_depth > 0 { 
+            // maek it as initialized
+            self.locals.last_mut().unwrap().initialized = true;
+            return; 
+        }
         self.emit_byte(OP_DEFINE_GLOBAL);
     }
 
@@ -92,6 +100,7 @@ impl Compiler {
             let local = Local {
                 name: previous_token,
                 depth: self.scope_depth,
+                initialized: false,
             };
             // check if the variable is already declared
             if self.locals.iter().any(|current_local| token_equals(current_local, &local, &self.scanner.source)) {
@@ -200,14 +209,51 @@ impl Compiler {
     }
 
     fn variable(&mut self) {
-        self.identifier_constant();
-        if self.match_token(TokenType::Equal) {
-            self.expression();
-            self.emit_byte(OP_SET_GLOBAL);
+        let setOp;
+        let getOp;
+        let localIndex = self.resolve_local(self.previous_token);
+        // -1 means the variable is global
+        if localIndex != -1 {
+            self.emit_constant(Value::Number(localIndex as f64));
+            setOp = OP_SET_LOCAL;
+            getOp = OP_GET_LOCAL;
         }
         else{
-            self.emit_byte(OP_GET_GLOBAL);
+            self.identifier_constant();
+            setOp = OP_SET_GLOBAL;
+            getOp = OP_GET_GLOBAL;
         }
+        
+        if self.match_token(TokenType::Equal) {
+            self.expression();
+            if localIndex != -1 {
+                self.emit_bytes(setOp, localIndex as u8);
+            } else{
+                self.emit_byte(setOp);
+            }
+        }
+        else{
+            if localIndex != -1 {
+                self.emit_bytes(getOp, localIndex as u8);
+            } else{
+                self.emit_byte(getOp);
+            }
+        }
+    }
+
+    /**
+    Resolves a local variable
+    */
+    fn resolve_local(&mut self, name: Token) -> i32 {
+        for (i, local) in self.locals.iter().enumerate().rev() {
+            if local.name.lexeme(&self.scanner.source) == name.lexeme(&self.scanner.source) {
+                if !local.initialized {
+                    self.error(name, "Can't read local variable in its own initializer.");
+                }
+                return i as i32;
+            }
+        }
+        return -1;
     }
 
     /**

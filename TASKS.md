@@ -109,8 +109,8 @@
 # 26.09.2025
 - [x] Representing local variables in compiler
 - [x] Block statments
-- [ ] Declaring local variables
-- [ ] Using locals
+- [x] Declaring local variables
+- [x] Using locals
 
 
 

@@ -22,6 +22,8 @@ pub const OP_POP: u8 = 0x0F;
 pub const OP_DEFINE_GLOBAL: u8 = 0x10;
 pub const OP_GET_GLOBAL: u8 = 0x11;
 pub const OP_SET_GLOBAL: u8 = 0x12;
+pub const OP_GET_LOCAL: u8 = 0x13;
+pub const OP_SET_LOCAL: u8 = 0x14;
 
 
 
@@ -94,6 +96,8 @@ impl Chunk {
                 OP_DEFINE_GLOBAL => println!("OP_DEFINE_GLOBAL"),
                 OP_GET_GLOBAL => println!("OP_GET_GLOBAL"),
                 OP_SET_GLOBAL => println!("OP_SET_GLOBAL"),
+                OP_GET_LOCAL => println!("OP_GET_LOCAL"),
+                OP_SET_LOCAL => println!("OP_SET_LOCAL"),
                 other => println!("Unknown opcode {}", other),
             }
         }
