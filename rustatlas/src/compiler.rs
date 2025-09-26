@@ -82,7 +82,7 @@ impl Compiler {
         self.consume(TokenType::Semicolon, "Expected ';' after variable declaration.");
         // don't define a global variable if we are in a local scope
         if self.scope_depth > 0 { 
-            // maek it as initialized
+            // mark it as initialized
             self.locals.last_mut().unwrap().initialized = true;
             return; 
         }
@@ -102,8 +102,11 @@ impl Compiler {
                 depth: self.scope_depth,
                 initialized: false,
             };
-            // check if the variable is already declared
-            if self.locals.iter().any(|current_local| token_equals(current_local, &local, &self.scanner.source)) {
+            // check if the variable is already declared in the current scope
+            if self.locals.iter().any(|current_local| 
+                current_local.depth == self.scope_depth && 
+                current_local.name.lexeme(&self.scanner.source) == local.name.lexeme(&self.scanner.source)
+            ) {
                 self.error(previous_token, "Variable with this name already declared in this scope.");
                 return 0;
             }
@@ -158,11 +161,11 @@ impl Compiler {
     }
 
     fn end_scope(&mut self) {
+        self.scope_depth -= 1;
         while self.locals.len() > 0 && self.locals[self.locals.len() - 1].depth > self.scope_depth {
             self.emit_byte(OP_POP);
             self.locals.pop();
         }
-        self.scope_depth -= 1;
     }
 
     /**
@@ -209,34 +212,22 @@ impl Compiler {
     }
 
     fn variable(&mut self) {
-        let setOp;
-        let getOp;
         let localIndex = self.resolve_local(self.previous_token);
-        // -1 means the variable is global
-        if localIndex != -1 {
-            self.emit_constant(Value::Number(localIndex as f64));
-            setOp = OP_SET_LOCAL;
-            getOp = OP_GET_LOCAL;
-        }
-        else{
-            self.identifier_constant();
-            setOp = OP_SET_GLOBAL;
-            getOp = OP_GET_GLOBAL;
-        }
         
         if self.match_token(TokenType::Equal) {
             self.expression();
             if localIndex != -1 {
-                self.emit_bytes(setOp, localIndex as u8);
-            } else{
-                self.emit_byte(setOp);
+                self.emit_bytes(OP_SET_LOCAL, localIndex as u8);
+            } else {
+                self.identifier_constant();
+                self.emit_byte(OP_SET_GLOBAL);
             }
-        }
-        else{
+        } else {
             if localIndex != -1 {
-                self.emit_bytes(getOp, localIndex as u8);
-            } else{
-                self.emit_byte(getOp);
+                self.emit_bytes(OP_GET_LOCAL, localIndex as u8);
+            } else {
+                self.identifier_constant();
+                self.emit_byte(OP_GET_GLOBAL);
             }
         }
     }
