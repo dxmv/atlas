@@ -130,9 +130,9 @@
 - [x] Assignment
 
 ### Phase 20 - Local Variables
-- [x] Representing local variables
-- [ ] Block statments
-- [ ] Declaring local variables
+- [x] Representing local variables in compiler
+- [x] Block statments
+- [x] Declaring local variables
 - [ ] Using locals
 
 ### Phase 21 - Jumps

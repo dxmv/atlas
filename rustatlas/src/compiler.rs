@@ -1,7 +1,6 @@
 use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_PRINT, OP_POP, OP_DEFINE_GLOBAL, OP_GET_GLOBAL, OP_SET_GLOBAL};
 use crate::scanner::Scanner;
-use crate::token::Token;
-use crate::token::TokenType;
+use crate::token::{Token, token_equals, TokenType};
 use crate::value::{Value, ObjRef, Obj};
 use std::rc::Rc;
 
@@ -77,6 +76,8 @@ impl Compiler {
             self.emit_byte(OP_NIL);
         }
         self.consume(TokenType::Semicolon, "Expected ';' after variable declaration.");
+        // don't define a global variable if we are in a local scope
+        if self.scope_depth > 0 { return; }
         self.emit_byte(OP_DEFINE_GLOBAL);
     }
 
@@ -85,6 +86,21 @@ impl Compiler {
     */
     fn parse_variable(&mut self, message: &str) -> u8 {
         self.consume(TokenType::Identifier, message);
+        // declare a local variable and exit the function if we are in a local scope
+        if self.scope_depth > 0 { 
+            let previous_token = self.previous_token;
+            let local = Local {
+                name: previous_token,
+                depth: self.scope_depth,
+            };
+            // check if the variable is already declared
+            if self.locals.iter().any(|current_local| token_equals(current_local, &local, &self.scanner.source)) {
+                self.error(previous_token, "Variable with this name already declared in this scope.");
+                return 0;
+            }
+            self.locals.push(local);
+            return 0;
+        }
         self.identifier_constant()
     }
 
@@ -120,11 +136,23 @@ impl Compiler {
     }
 
     fn block(&mut self) {
-        self.scope_depth += 1;
+        self.begin_scope();
         while !self.check(TokenType::RightBrace) && !self.check(TokenType::Eof) {
             self.declaration();
         }
         self.consume(TokenType::RightBrace, "Expected '}' after block.");
+        self.end_scope();
+    }
+
+    fn begin_scope(&mut self) {
+        self.scope_depth += 1;
+    }
+
+    fn end_scope(&mut self) {
+        while self.locals.len() > 0 && self.locals[self.locals.len() - 1].depth > self.scope_depth {
+            self.emit_byte(OP_POP);
+            self.locals.pop();
+        }
         self.scope_depth -= 1;
     }
 

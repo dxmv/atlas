@@ -106,6 +106,12 @@
 - [x] Reading varaibles
 - [x] Assignment
 
+# 26.09.2025
+- [x] Representing local variables in compiler
+- [x] Block statments
+- [ ] Declaring local variables
+- [ ] Using locals
+
 
 
 

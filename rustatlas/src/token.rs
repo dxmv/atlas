@@ -1,3 +1,4 @@
+use crate::compiler::Local;
 
 
 #[derive(PartialEq, Debug, Copy, Clone)]
@@ -65,4 +66,8 @@ pub fn is_keyword(identifier: &str) -> Option<TokenType> {
                 "print" => Some(TokenType::Print),
                 _ => None,
         }
+}
+
+pub fn token_equals(token1: &Local, token2: &Local, source: &str) -> bool {
+        token1.name.lexeme(source) == token2.name.lexeme(source) && token1.depth == token2.depth
 }
