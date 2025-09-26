@@ -97,6 +97,15 @@
 - [x] Strings in compiler
 - [x] Operations on Strings
 
+# 25.09.2025
+- [x] Add interning to chunk
+- [x] When we encounter a string in compiler intern it
+- [x] Opeartions on Strings faster
+- [x] Print & Expression statement
+- [x] Varaible declarations
+- [x] Reading varaibles
+- [x] Assignment
+
 
 
 

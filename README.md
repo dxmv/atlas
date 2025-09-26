@@ -127,7 +127,15 @@
 - [x] Print & Expression statement
 - [x] Varaible declarations
 - [x] Reading varaibles
-- [ ] Assignment
+- [x] Assignment
+
+### Phase 20 - Local Variables
+- [x] Representing local variables
+- [ ] Block statments
+- [ ] Declaring local variables
+- [ ] Using locals
+
+### Phase 21 - Jumps
 
 
 

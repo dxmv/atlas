@@ -5,6 +5,11 @@ use crate::token::TokenType;
 use crate::value::{Value, ObjRef, Obj};
 use std::rc::Rc;
 
+pub struct Local {
+    pub name: Token,
+    pub depth: usize,
+}
+
 pub struct Compiler {
     pub previous_token: Token,
     pub current_token: Token,
@@ -12,6 +17,8 @@ pub struct Compiler {
     pub panic_mode: bool,
     pub scanner: Scanner,
     pub chunk: Chunk,
+    pub locals: Vec<Local>,
+    pub scope_depth: usize,
 }
 
 impl Compiler {
@@ -23,6 +30,8 @@ impl Compiler {
             panic_mode: false,
             scanner: Scanner::new(source),
             chunk: Chunk::new(),
+            scope_depth: 0,
+            locals: vec![],
         }
     }
 
