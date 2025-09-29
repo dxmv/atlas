@@ -24,7 +24,8 @@ pub const OP_GET_GLOBAL: u8 = 0x11;
 pub const OP_SET_GLOBAL: u8 = 0x12;
 pub const OP_GET_LOCAL: u8 = 0x13;
 pub const OP_SET_LOCAL: u8 = 0x14;
-
+pub const OP_JUMP_IF_FALSE: u8 = 0x15;
+pub const OP_JUMP: u8 = 0x16;
 
 
 pub struct Chunk {
@@ -98,6 +99,8 @@ impl Chunk {
                 OP_SET_GLOBAL => println!("OP_SET_GLOBAL"),
                 OP_GET_LOCAL => println!("OP_GET_LOCAL"),
                 OP_SET_LOCAL => println!("OP_SET_LOCAL"),
+                OP_JUMP_IF_FALSE => println!("OP_JUMP_IF_FALSE"),
+                OP_JUMP => println!("OP_JUMP"),
                 other => println!("Unknown opcode {}", other),
             }
         }

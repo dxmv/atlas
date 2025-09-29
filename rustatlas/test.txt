@@ -1,4 +1,7 @@
-{
-        var test = 1;
-        print test;
+if (1==2){
+        print "a";
 }
+else{
+        print "b";
+}
+print "c";

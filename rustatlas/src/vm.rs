@@ -1,6 +1,10 @@
 
 
-use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_POP, OP_PRINT, OP_DEFINE_GLOBAL, OP_GET_GLOBAL, OP_SET_GLOBAL, OP_GET_LOCAL, OP_SET_LOCAL};
+use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, 
+    OP_NEGATE, OP_ADD, OP_SUBTRACT, OP_MULTIPLY, OP_DIVIDE, OP_TRUE, 
+    OP_FALSE, OP_NIL, OP_NOT, OP_EQUAL, OP_GREATER, OP_LESS, OP_POP, OP_PRINT, 
+    OP_DEFINE_GLOBAL, OP_GET_GLOBAL, OP_SET_GLOBAL, OP_GET_LOCAL, OP_SET_LOCAL, OP_JUMP_IF_FALSE
+};
 use crate::value::{Value, ObjRef, Obj, ObjString};
 use std::collections::HashMap;
 
@@ -132,6 +136,26 @@ impl VM {
                     let value = self.pop();
                     self.stack[slot as usize] = value;
                 }
+                OP_JUMP_IF_FALSE => {
+                    // need to read the offset as a 16 bit integer
+                    let high_byte = self.chunk.code[self.ip] as u16;
+                    let low_byte = self.chunk.code[self.ip + 1] as u16;
+                    let offset = (high_byte << 8) | low_byte;
+                    self.ip += 2;
+                    
+                    let condition = self.stack.last().unwrap().clone();
+                    if !self.is_truthy(condition) {
+                        self.ip += offset as usize;
+                    }
+                }
+                OP_JUMP => {
+                    // need to read the offset as a 16 bit integer
+                    let high_byte = self.chunk.code[self.ip] as u16;
+                    let low_byte = self.chunk.code[self.ip + 1] as u16;
+                    let offset = (high_byte << 8) | low_byte;
+                    self.ip += 2;
+                    self.ip += offset as usize;
+                }
                 _ => {
                     return InterpretResult::RuntimeError("Unknown opcode".to_string());
                 }
@@ -192,6 +216,7 @@ impl VM {
         }
         self.stack.pop().unwrap()
     }
+
 
     /**
     Tries to pop the number from the stack

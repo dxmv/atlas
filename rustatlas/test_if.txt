@@ -1,0 +1,19 @@
+if (true) {
+    print "This should print";
+}
+
+if (false) {
+    print "This should NOT print";
+}
+
+if (true) {
+    print "Then branch";
+} else {
+    print "Else branch";
+}
+
+if (false) {
+    print "Then branch";
+} else {
+    print "Else branch";
+}

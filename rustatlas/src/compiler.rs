@@ -1,7 +1,7 @@
 use crate::chunk::{Chunk, OP_CONSTANT, OP_RETURN, OP_NEGATE, OP_ADD, 
     OP_MULTIPLY, OP_SUBTRACT, OP_DIVIDE, OP_TRUE, OP_FALSE, OP_NIL, OP_NOT, 
     OP_EQUAL, OP_GREATER, OP_LESS, OP_PRINT, OP_POP, OP_DEFINE_GLOBAL, 
-    OP_GET_GLOBAL, OP_SET_GLOBAL, OP_GET_LOCAL, OP_SET_LOCAL};
+    OP_GET_GLOBAL, OP_SET_GLOBAL, OP_GET_LOCAL, OP_SET_LOCAL, OP_JUMP_IF_FALSE, OP_JUMP};
 use crate::scanner::Scanner;
 use crate::token::{Token, token_equals, TokenType};
 use crate::value::{Value, ObjRef, Obj};
@@ -130,9 +130,48 @@ impl Compiler {
         else if self.match_token(TokenType::LeftBrace) {
             self.block();
         }
+        else if self.match_token(TokenType::If) {
+            self.if_statement();
+        }
         else{
             self.expression_statement();
         }
+    }
+
+    fn emit_jump(&mut self, instruction: u8) -> usize {
+        self.emit_byte(instruction);
+        self.emit_byte(0xFF);
+        self.emit_byte(0xFF);
+        // returns the offset of the emitted instruction in the chunk
+        self.chunk.code.len() - 2
+    }
+
+    fn patch_jump(&mut self, offset: usize) {
+        let jump = (self.chunk.code.len() - offset - 2) as u16;
+        self.chunk.code[offset] = ((jump >> 8) & 0xFF) as u8;
+        self.chunk.code[offset + 1] = (jump & 0xFF) as u8;
+    }
+
+    fn if_statement(&mut self) {
+        self.consume(TokenType::LeftParen, "Expected '(' after if.");
+        self.expression();
+        self.consume(TokenType::RightParen, "Expected ')' after condition.");
+        
+        // Jump if condition is false (skip the then branch)
+        let then_jump = self.emit_jump(OP_JUMP_IF_FALSE);
+        self.emit_byte(OP_POP); // Pop the condition value
+        
+        // compile the then statement
+        self.statement();
+        
+        // If there's an else clause, we need to jump over it
+        let else_jump = self.emit_jump(OP_JUMP);
+        self.patch_jump(then_jump);
+        
+        if self.match_token(TokenType::Else) {
+            self.statement();
+        }
+        self.patch_jump(else_jump);
     }
 
     fn print_statement(&mut self) {
