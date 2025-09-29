@@ -112,6 +112,12 @@
 - [x] Declaring local variables
 - [x] Using locals
 
+# 29.09.2025
+- [x] If and else statements
+- [x] Logical operators
+- [ ] While statements
+- [ ] For statements
+
 
 
 

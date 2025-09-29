@@ -1,7 +1,6 @@
-if (1==2){
+if (1==0 or 2 == 2){
         print "a";
 }
 else{
         print "b";
 }
-print "c";

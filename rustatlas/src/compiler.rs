@@ -422,8 +422,28 @@ impl Compiler {
             TokenType::LessEqual => ParseRule::new(None, Some(|c| c.binary()), Precedence::Comparison),
             TokenType::String => ParseRule::new(Some(|c| c.string()), None, Precedence::None),
             TokenType::Identifier => ParseRule::new(Some(|c| c.variable()), None, Precedence::None),
+            TokenType::And => ParseRule::new(None, Some(|c| c.and()), Precedence::And),
+            TokenType::Or => ParseRule::new(None, Some(|c| c.or()), Precedence::Or),
             _ => ParseRule::new(None, None, Precedence::None),
         }
+    }
+
+    fn and(&mut self) {
+        let end_jump = self.emit_jump(OP_JUMP_IF_FALSE);
+        self.emit_byte(OP_POP);
+        self.parse_precedence(Precedence::And);
+        self.patch_jump(end_jump);
+    }
+    
+    fn or(&mut self) {
+        let else_jump = self.emit_jump(OP_JUMP_IF_FALSE);
+        let end_jump = self.emit_jump(OP_JUMP);
+
+        self.patch_jump(else_jump);
+        self.emit_byte(OP_POP);
+
+        self.parse_precedence(Precedence::Or);
+        self.patch_jump(end_jump);
     }
 
 }

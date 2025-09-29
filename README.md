@@ -136,8 +136,8 @@
 - [x] Using locals
 
 ### Phase 21 - Jumps
-- [ ] If and else statements
-- [ ] Logical operators
+- [x] If and else statements
+- [x] Logical operators
 - [ ] While statements
 - [ ] For statements
 
